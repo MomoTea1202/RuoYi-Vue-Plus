@@ -100,6 +100,7 @@ public class SysLoginService {
             sysSocialService.updateByBo(bo);
             // 如果要绑定的平台账号已经被绑定过了 是否抛异常自行决断
             // throw new ServiceException("此平台账号已经被绑定!");
+
         }
     }
 
