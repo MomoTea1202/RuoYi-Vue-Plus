@@ -2,6 +2,7 @@ package org.dromara.system.service;
 
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.dromara.common.mybatis.core.page.SearchCriteria;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.bo.SysUsrPermBo;
 import org.dromara.system.domain.vo.SysUserExportVo;
@@ -17,6 +18,8 @@ import java.util.List;
  */
 public interface ISysUserService {
 
+
+    TableDataInfo<SysUserVo> selectPageUserList(SearchCriteria searchCriteria, PageQuery pageQuery);
 
     /**
      * 根据条件分页查询用户列表

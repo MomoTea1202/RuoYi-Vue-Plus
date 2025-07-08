@@ -19,14 +19,12 @@ import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.page.PageQuery;
+import org.dromara.common.mybatis.core.page.SearchCriteria;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.tenant.helper.TenantHelper;
 import org.dromara.common.web.core.BaseController;
-import org.dromara.system.domain.bo.SysDeptBo;
-import org.dromara.system.domain.bo.SysPostBo;
-import org.dromara.system.domain.bo.SysRoleBo;
-import org.dromara.system.domain.bo.SysUserBo;
+import org.dromara.system.domain.bo.*;
 import org.dromara.system.domain.vo.*;
 import org.dromara.system.listener.SysUserImportListener;
 import org.dromara.system.service.*;
@@ -60,8 +58,8 @@ public class SysUserController extends BaseController {
      */
     @SaCheckPermission("system:user:list")
     @GetMapping("/list")
-    public TableDataInfo<SysUserVo> list(SysUserBo user, PageQuery pageQuery) {
-        return userService.selectPageUserList(user, pageQuery);
+    public TableDataInfo<SysUserVo> list(SearchCriteria searchCriteria, PageQuery pageQuery) {
+        return userService.selectPageUserList(searchCriteria, pageQuery);
     }
 
     /**
