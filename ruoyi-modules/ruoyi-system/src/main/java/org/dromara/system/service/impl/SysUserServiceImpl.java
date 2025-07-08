@@ -24,6 +24,7 @@ import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.*;
+import org.dromara.common.mybatis.core.page.SearchCriteria;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.SysPostVo;
 import org.dromara.system.domain.vo.SysRoleVo;
@@ -55,6 +56,45 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     private final SysPostMapper postMapper;
     private final SysUserRoleMapper userRoleMapper;
     private final SysUserPostMapper userPostMapper;
+
+    @Override
+    public TableDataInfo<SysUserVo> selectPageUserList(SearchCriteria searchCriteria, PageQuery pageQuery) {
+        Wrapper<SysUser> wrapper =  this.buildQueryWrapper(searchCriteria, pageQuery);
+
+        Page<SysUserVo> page = pageQuery.build();
+        Page<SysUserVo> resultPage = baseMapper.selectPageUserList(page, wrapper);
+
+        return TableDataInfo.build(resultPage);
+    }
+
+
+    private Wrapper<SysUser> buildQueryWrapper(SearchCriteria searchCriteria, PageQuery pageQuery) {
+        Map<String, Object> params = searchCriteria.getSearchParams();
+        QueryWrapper<SysUser> wrapper = Wrappers.query();
+
+        wrapper.eq("u.del_flag", SystemConstants.NORMAL)
+            .eq(params.containsKey("usrId") && StringUtils.isNotBlank((String) params.get("usrId")), "u.user_id", params.get("usrId"))
+            .like(params.containsKey("userName") && StringUtils.isNotBlank((String) params.get("userName")), "u.user_name", params.get("userName"))
+            .like(params.containsKey("nickName") && StringUtils.isNotBlank((String) params.get("nickName")), "u.nick_name", params.get("nickName"))
+            .like(params.containsKey("status") && StringUtils.isNotBlank((String) params.get("status")), "u.status", params.get("status"))
+            .like(params.containsKey("phonenumber") && StringUtils.isNotBlank((String) params.get("phonenumber")), "u.phonenumber", params.get("phonenumber"))
+            .between(params.get("beginTime") != null && params.get("endTime") != null, "u.create_time", params.get("beginTime"), params.get("endTime"))
+            .and(params.containsKey("deptId") && StringUtils.isNotBlank((String) params.get("deptId")), w -> {
+                List<SysDept> deptList = deptMapper.selectListByParentId(Long.valueOf((String) params.get("deptId")));
+                List<Long> ids = StreamUtils.toList(deptList, SysDept::getDeptId);
+                ids.add(Long.valueOf((String) params.get("deptId")));
+                w.in("u.dept_id", ids);
+            });
+
+        if(StringUtils.isNotBlank(pageQuery.getOrderByColumn()))
+        {
+            String sortingDirection =  StringUtils.equals("asc",pageQuery.getIsAsc()) ? "ASC": "DESC";
+            String sortingFieldName  = getFieldWithTableName(pageQuery.getOrderByColumn());
+            wrapper.last("ORDER BY " + sortingFieldName + " " +  sortingDirection);
+        }
+        return wrapper;
+    }
+
 
     @Override
     public TableDataInfo<SysUserVo> selectPageUserList(SysUserBo user, PageQuery pageQuery) {
