@@ -11,6 +11,15 @@
         <id property="userId" column="user_id"/>
     </resultMap>
 
+    <select id="selectPageUserList" resultMap="SysUserResult">
+        SELECT u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex,
+        u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,
+        d.dept_name
+        FROM sys_user u
+        LEFT JOIN sys_dept d ON u.dept_id = d.dept_id
+        ${ew.getCustomSqlSegment}
+    </select>
+
     <select id="selectUserExportList" resultMap="SysUserExportResult">
         select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex,
             u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,
