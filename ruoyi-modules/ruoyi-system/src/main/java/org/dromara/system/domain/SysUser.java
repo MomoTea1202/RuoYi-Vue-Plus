@@ -103,6 +103,8 @@ public class SysUser extends TenantEntity {
      */
     private String remark;
 
+    private String parentId;
+
 
     public SysUser(Long userId) {
         this.userId = userId;

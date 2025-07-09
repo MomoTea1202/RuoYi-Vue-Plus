@@ -113,6 +113,8 @@ public class SysUserBo extends BaseEntity {
      */
     private String excludeUserIds;
 
+    private String parentId;
+
     public SysUserBo(Long userId) {
         this.userId = userId;
     }

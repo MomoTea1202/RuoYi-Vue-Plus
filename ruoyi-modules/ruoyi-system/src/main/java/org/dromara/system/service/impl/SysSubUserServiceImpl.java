@@ -17,24 +17,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.constant.CacheNames;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.dto.UserDTO;
+import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.service.UserService;
 import org.dromara.common.core.utils.*;
 import org.dromara.common.mybatis.core.page.PageQuery;
+import org.dromara.common.mybatis.core.page.SearchCriteria;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.*;
-import org.dromara.common.mybatis.core.page.SearchCriteria;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.SysPostVo;
 import org.dromara.system.domain.vo.SysRoleVo;
 import org.dromara.system.domain.vo.SysUserExportVo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.*;
+import org.dromara.system.service.ISysSubUserService;
 import org.dromara.system.service.ISysUserService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,10 +50,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-@Primary
-public class SysUserServiceImpl implements ISysUserService, UserService {
+public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
 
-    private final SysUserMapper baseMapper;
+    private final SysSubUserMapper baseMapper;
     private final SysDeptMapper deptMapper;
     private final SysRoleMapper roleMapper;
     private final SysPostMapper postMapper;
@@ -64,7 +64,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         Wrapper<SysUser> wrapper =  this.buildQueryWrapper(searchCriteria, pageQuery);
 
         Page<SysUserVo> page = pageQuery.build();
-        Page<SysUserVo> resultPage = baseMapper.selectPageUserList(page, wrapper);
+        Page<SysUserVo> resultPage = baseMapper.selectPageSubUserList(page, wrapper);
 
         return TableDataInfo.build(resultPage);
     }
@@ -73,7 +73,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     private Wrapper<SysUser> buildQueryWrapper(SearchCriteria searchCriteria, PageQuery pageQuery) {
         Map<String, Object> params = searchCriteria.getSearchParams();
         QueryWrapper<SysUser> wrapper = Wrappers.query();
-
+        String loginUser=LoginHelper.getUserIdStr();
         wrapper.eq("u.del_flag", SystemConstants.NORMAL)
             .eq(params.containsKey("usrId") && StringUtils.isNotBlank((String) params.get("usrId")), "u.user_id", params.get("usrId"))
             .like(params.containsKey("userName") && StringUtils.isNotBlank((String) params.get("userName")), "u.user_name", params.get("userName"))
@@ -87,74 +87,10 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
                 ids.add(Long.valueOf((String) params.get("deptId")));
                 w.in("u.dept_id", ids);
             });
-
-        if(StringUtils.isNotBlank(pageQuery.getOrderByColumn()))
-        {
-            String sortingDirection =  StringUtils.equals("asc",pageQuery.getIsAsc()) ? "ASC": "DESC";
-            String sortingFieldName  = getFieldWithTableName(pageQuery.getOrderByColumn());
-            wrapper.last("ORDER BY " + sortingFieldName + " " +  sortingDirection);
-        }
-        return wrapper;
-    }
-
-
-    @Override
-    public TableDataInfo<SysUserVo> selectPageUserList(SysUserBo user, PageQuery pageQuery) {
-        Wrapper<SysUser> wrapper =  this.buildQueryWrapper(user, pageQuery);
-
-        Page<SysUserVo> page = pageQuery.build();
-        Page<SysUserVo> resultPage = baseMapper.selectPageUserList(page, wrapper);
-
-        return TableDataInfo.build(resultPage);
-    }
-
-    /**
-     * 根据条件分页查询用户列表
-     *
-     * @param user 用户信息
-     * @return 用户信息集合信息
-     */
-    @Override
-    public List<SysUserExportVo> selectUserExportList(SysUserBo user) {
-        Map<String, Object> params = user.getParams();
-        QueryWrapper<SysUser> wrapper = Wrappers.query();
-        wrapper.eq("u.del_flag", SystemConstants.NORMAL)
-            .like(StringUtils.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
-            .like(StringUtils.isNotBlank(user.getNickName()), "u.nick_name", user.getNickName())
-            .eq(StringUtils.isNotBlank(user.getStatus()), "u.status", user.getStatus())
-            .like(StringUtils.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                "u.create_time", params.get("beginTime"), params.get("endTime"))
-            .and(ObjectUtil.isNotNull(user.getDeptId()), w -> {
-                List<SysDept> deptList = deptMapper.selectListByParentId(user.getDeptId());
-                List<Long> ids = StreamUtils.toList(deptList, SysDept::getDeptId);
-                ids.add(user.getDeptId());
-                w.in("u.dept_id", ids);
-            }).orderByAsc("u.user_id");
-        return baseMapper.selectUserExportList(wrapper);
-    }
-
-    private Wrapper<SysUser> buildQueryWrapper(SysUserBo user, PageQuery pageQuery) {
-        Map<String, Object> params = user.getParams();
-        QueryWrapper<SysUser> wrapper = Wrappers.query();
-
-        wrapper.eq("u.del_flag", SystemConstants.NORMAL)
-            .eq(ObjectUtil.isNotNull(user.getUserId()), "u.user_id", user.getUserId())
-            .like(StringUtils.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
-            .like(StringUtils.isNotBlank(user.getNickName()), "u.nick_name", user.getNickName())
-            .eq(StringUtils.isNotBlank(user.getStatus()), "u.status", user.getStatus())
-            .like(StringUtils.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                "u.create_time", params.get("beginTime"), params.get("endTime"))
-            .and(ObjectUtil.isNotNull(user.getDeptId()), w -> {
-                List<SysDept> deptList = deptMapper.selectListByParentId(user.getDeptId());
-                List<Long> ids = StreamUtils.toList(deptList, SysDept::getDeptId);
-                ids.add(user.getDeptId());
-                w.in("u.dept_id", ids);
-            });
-
-        if (StringUtils.isNotBlank(user.getExcludeUserIds())) {
-            wrapper.notIn("u.user_id", StringUtils.splitList(user.getExcludeUserIds()));
+        if(!(LoginHelper.isSuperAdmin())){
+            wrapper.eq("u.parent_id",loginUser);
+        }else{
+            wrapper.isNotNull("u.parent_id");
         }
 
         if(StringUtils.isNotBlank(pageQuery.getOrderByColumn()))
@@ -165,6 +101,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         }
         return wrapper;
     }
+
 
     private String getFieldWithTableName(String fieldName) {
         String fieldTargetTableName = "u.";
@@ -173,45 +110,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             fieldTargetTableName = "d.";
         }
         return fieldTargetTableName + fieldName;
-    }
-
-    /**
-     * 根据条件分页查询已分配用户角色列表
-     *
-     * @param user 用户信息
-     * @return 用户信息集合信息
-     */
-    @Override
-    public TableDataInfo<SysUserVo> selectAllocatedList(SysUserBo user, PageQuery pageQuery) {
-        QueryWrapper<SysUser> wrapper = Wrappers.query();
-        wrapper.eq("u.del_flag", SystemConstants.NORMAL)
-            .eq(ObjectUtil.isNotNull(user.getRoleId()), "r.role_id", user.getRoleId())
-            .like(StringUtils.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
-            .eq(StringUtils.isNotBlank(user.getStatus()), "u.status", user.getStatus())
-            .like(StringUtils.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
-            .orderByAsc("u.user_id");
-        Page<SysUserVo> page = baseMapper.selectAllocatedList(pageQuery.build(), wrapper);
-        return TableDataInfo.build(page);
-    }
-
-    /**
-     * 根据条件分页查询未分配用户角色列表
-     *
-     * @param user 用户信息
-     * @return 用户信息集合信息
-     */
-    @Override
-    public TableDataInfo<SysUserVo> selectUnallocatedList(SysUserBo user, PageQuery pageQuery) {
-        List<Long> userIds = userRoleMapper.selectUserIdsByRoleId(user.getRoleId());
-        QueryWrapper<SysUser> wrapper = Wrappers.query();
-        wrapper.eq("u.del_flag", SystemConstants.NORMAL)
-            .and(w -> w.ne("r.role_id", user.getRoleId()).or().isNull("r.role_id"))
-            .notIn(CollUtil.isNotEmpty(userIds), "u.user_id", userIds)
-            .like(StringUtils.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
-            .like(StringUtils.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
-            .orderByAsc("u.user_id");
-        Page<SysUserVo> page = baseMapper.selectUnallocatedList(pageQuery.build(), wrapper);
-        return TableDataInfo.build(page);
     }
 
     /**
@@ -377,7 +275,8 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insertUser(SysUserBo user) {
-        user.setParentId(null);
+        user.setParentId(LoginHelper.getUserIdStr());
+        user.setDeptId(LoginHelper.getDeptId());
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
         // 新增用户信息
         int rows = baseMapper.insert(sysUser);

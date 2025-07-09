@@ -139,4 +139,6 @@ public class SysUserVo implements Serializable {
      */
     private Long roleId;
 
+    private String parentId;
+
 }
