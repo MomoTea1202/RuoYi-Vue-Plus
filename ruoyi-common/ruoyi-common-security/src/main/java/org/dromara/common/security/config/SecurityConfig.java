@@ -79,7 +79,8 @@ public class SecurityConfig implements WebMvcConfigurer {
             })).addPathPatterns("/**")
             // 排除不需要拦截的路径
             .excludePathPatterns(securityProperties.getExcludes())
-            .excludePathPatterns(ssePath);
+            .excludePathPatterns(ssePath)
+            .excludePathPatterns("/sys/api/**");
     }
 
     /**
