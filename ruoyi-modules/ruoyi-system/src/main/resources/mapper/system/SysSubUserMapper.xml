@@ -18,6 +18,12 @@
         ${ew.getCustomSqlSegment}
     </select>
 
+    <select id="selectUsernameByUserId" parameterType="Long" resultType="String">
+        select user_name
+        from sys_user
+        where user_id = #{userId}
+    </select>
+
 
 
 

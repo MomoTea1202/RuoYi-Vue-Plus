@@ -56,8 +56,11 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
     private final SysDeptMapper deptMapper;
     private final SysRoleMapper roleMapper;
     private final SysPostMapper postMapper;
+    private final SysMenuMapper menuMapper;
+
     private final SysUserRoleMapper userRoleMapper;
     private final SysUserPostMapper userPostMapper;
+    private final EachUsrPermMapper usrPermMapper;
 
     @Override
     public TableDataInfo<SysUserVo> selectPageUserList(SearchCriteria searchCriteria, PageQuery pageQuery) {
@@ -277,6 +280,14 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
     public int insertUser(SysUserBo user) {
         user.setParentId(LoginHelper.getUserIdStr());
         user.setDeptId(LoginHelper.getDeptId());
+        List<SysPostVo> posts = postMapper.selectPostsByUserId(LoginHelper.getUserId());
+        Long[] postIds = posts.stream()
+            .map(SysPostVo::getPostId)
+            .toList().toArray(new Long[0]);
+        Long[] roleIds= {5L};
+        user.setRoleIds(roleIds);
+        user.setPostIds(postIds);
+
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
         // 新增用户信息
         int rows = baseMapper.insert(sysUser);
@@ -285,6 +296,7 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
         insertUserPost(user, false);
         // 新增用户与角色管理
         insertUserRole(user, false);
+        insertUserPermission(user,false);
         return rows;
     }
 
@@ -313,10 +325,8 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
     @CacheEvict(cacheNames = CacheNames.SYS_NICKNAME, key = "#user.userId")
     @Transactional(rollbackFor = Exception.class)
     public int updateUser(SysUserBo user) {
-        // 新增用户与角色管理
-        insertUserRole(user, true);
-        // 新增用户与岗位管理
-        insertUserPost(user, true);
+
+        insertUserPermission(user,true);
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
         // 防止错误更新后导致的数据误删除
         int flag = baseMapper.updateById(sysUser);
@@ -325,6 +335,28 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
         }
         return flag;
     }
+
+    private void insertUserPermission (SysUserBo user, boolean clear){
+            if (clear) {
+                usrPermMapper.delete(new LambdaQueryWrapper<EachUserPerm>().eq(EachUserPerm::getUsername, user.getUserName()));
+            }
+            Long[] menuId = user.getMenuIds();
+            String menuIdsStr = Arrays.stream(menuId)
+            .map(String::valueOf)
+            .collect(Collectors.joining(","));
+            List<String> menuIds = new ArrayList<>(Arrays.asList(menuIdsStr.split(",")));
+            List<String> perms = menuIds.stream()
+                .map(menuMapper::selectMenuPermsByMenuId)
+                .toList();
+            String permList = String.join(",",perms);
+
+            // 新增用户与岗位管理
+            EachUserPerm up = new EachUserPerm();
+            up.setUsername(user.getUserName());
+            up.setMenuId(menuIdsStr);
+            up.setPermList(permList);
+            usrPermMapper.insert(up);
+        }
 
     /**
      * 用户授权角色
@@ -482,6 +514,8 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
         userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, userId));
         // 删除用户与岗位表
         userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().eq(SysUserPost::getUserId, userId));
+        String username =baseMapper.selectUsernameByUserId(userId);
+        usrPermMapper.delete(new LambdaQueryWrapper<EachUserPerm>().eq(EachUserPerm::getUsername, username));
         // 防止更新失败导致的数据删除
         int flag = baseMapper.deleteById(userId);
         if (flag < 1) {
@@ -508,6 +542,10 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
         userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getUserId, ids));
         // 删除用户与岗位表
         userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().in(SysUserPost::getUserId, ids));
+        List<String> username = ids.stream()
+            .map(baseMapper::selectUsernameByUserId)
+            .toList();
+        usrPermMapper.delete(new LambdaQueryWrapper<EachUserPerm>().in(EachUserPerm::getUsername, username));
         // 防止更新失败导致的数据删除
         int flag = baseMapper.deleteByIds(ids);
         if (flag < 1) {

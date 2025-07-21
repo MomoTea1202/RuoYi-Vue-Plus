@@ -60,6 +60,24 @@
         where r.role_id in (select role_id from sys_user_role where user_id = #{userId})
     </select>
 
+    <select id="selectMenuPermsByMenuId" parameterType="String" resultType="String">
+        select distinct m.perms
+        from sys_menu m
+        where m.status = '0' and m.menu_id = #{menuId}
+    </select>
+
+    <select id="selectMenuIdsByUsername" parameterType="String" resultType="String">
+        select menu_id
+        from each_usr_perm
+        where username = #{username}
+    </select>
+
+    <select id="selectPermsByUsername" parameterType="String" resultType="String">
+        select perm_list
+        from each_usr_perm
+        where username = #{username}
+    </select>
+
     <select id="selectMenuPermsByRoleId" parameterType="Long" resultType="String">
         select distinct m.perms
         from sys_menu m

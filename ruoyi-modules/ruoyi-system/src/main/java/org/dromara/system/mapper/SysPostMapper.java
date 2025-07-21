@@ -40,4 +40,6 @@ public interface SysPostMapper extends BaseMapperPlus<SysPost, SysPostVo> {
      */
     List<SysPostVo> selectPostsByUserId(Long userId);
 
+    Long selectPostId (Long userId);
+
 }

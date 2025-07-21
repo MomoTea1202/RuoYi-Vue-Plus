@@ -56,8 +56,10 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     private final SysDeptMapper deptMapper;
     private final SysRoleMapper roleMapper;
     private final SysPostMapper postMapper;
+    private final SysMenuMapper menuMapper;
     private final SysUserRoleMapper userRoleMapper;
     private final SysUserPostMapper userPostMapper;
+    private final EachUsrPermMapper usrPermMapper;
 
     @Override
     public TableDataInfo<SysUserVo> selectPageUserList(SearchCriteria searchCriteria, PageQuery pageQuery) {
@@ -386,6 +388,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         insertUserPost(user, false);
         // 新增用户与角色管理
         insertUserRole(user, false);
+        insertUserPermission(user,false);
         return rows;
     }
 
@@ -535,7 +538,38 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             userPostMapper.insertBatch(list);
         }
     }
+    private void insertUserPermission (SysUserBo user, boolean clear){
+        Long[] role = user.getRoleIds();
+        if (ArrayUtil.isNotEmpty(role)) {
+            if (clear) {
+                // 删除用户与岗位关联
+                usrPermMapper.delete(new LambdaQueryWrapper<EachUserPerm>().eq(EachUserPerm::getUsername, user.getUserName()));
+            }
+            // 新增用户与岗位管理
+            List<String> permList =  Arrays.stream(role)
+                .map(menuMapper::selectMenuPermsByRoleId)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .distinct()
+                .collect(Collectors.toList());
+            String perm = String.join(",",permList);
+            List<Long> menuId = Arrays.stream(role)
+                .filter(Objects::nonNull)
+                .flatMap(roleId -> menuMapper
+                    .selectMenuListByRoleId(roleId, false)
+                    .stream()
+                )
+                .distinct()
+                .collect(Collectors.toList());
+            String menuIds = StringUtils.join(menuId, ",");
+                EachUserPerm up = new EachUserPerm();
+                up.setUsername(user.getUserName());
+                up.setMenuId(menuIds);
+                up.setPermList(perm);
+            usrPermMapper.insert(up);
 
+
+    }}
     /**
      * 新增用户角色信息
      *
@@ -583,6 +617,8 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, userId));
         // 删除用户与岗位表
         userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().eq(SysUserPost::getUserId, userId));
+        String username =baseMapper.selectUsernameByUserId(userId);
+        usrPermMapper.delete(new LambdaQueryWrapper<EachUserPerm>().eq(EachUserPerm::getUsername, username));
         // 防止更新失败导致的数据删除
         int flag = baseMapper.deleteById(userId);
         if (flag < 1) {
@@ -609,6 +645,10 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getUserId, ids));
         // 删除用户与岗位表
         userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().in(SysUserPost::getUserId, ids));
+        List<String> username = ids.stream()
+            .map(baseMapper::selectUsernameByUserId)
+            .toList();
+        usrPermMapper.delete(new LambdaQueryWrapper<EachUserPerm>().in(EachUserPerm::getUsername, username));
         // 防止更新失败导致的数据删除
         int flag = baseMapper.deleteByIds(ids);
         if (flag < 1) {

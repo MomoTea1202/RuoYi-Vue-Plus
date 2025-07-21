@@ -23,6 +23,6 @@ public interface PermissionService {
      * @param userId  用户id
      * @return 菜单权限信息
      */
-    Set<String> getMenuPermission(Long userId);
+    Set<String> getMenuPermission(Long userId,String username);
 
 }

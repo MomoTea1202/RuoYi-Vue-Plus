@@ -90,7 +90,7 @@ public class SysUserBo extends BaseEntity {
     /**
      * 角色组
      */
-    @Size(min = 1, message = "用户角色不能为空")
+
     private Long[] roleIds;
 
     /**
@@ -114,6 +114,8 @@ public class SysUserBo extends BaseEntity {
     private String excludeUserIds;
 
     private String parentId;
+
+    private Long[] menuIds;
 
     public SysUserBo(Long userId) {
         this.userId = userId;

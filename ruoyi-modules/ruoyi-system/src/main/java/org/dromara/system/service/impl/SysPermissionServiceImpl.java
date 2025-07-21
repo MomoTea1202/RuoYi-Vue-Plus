@@ -49,14 +49,16 @@ public class SysPermissionServiceImpl implements ISysPermissionService, Permissi
      * @return 菜单权限信息
      */
     @Override
-    public Set<String> getMenuPermission(Long userId) {
+    public Set<String> getMenuPermission(Long userId, String username) {
         Set<String> perms = new HashSet<>();
         // 管理员拥有所有权限
         if (LoginHelper.isSuperAdmin(userId)) {
             perms.add("*:*:*");
         } else {
-            perms.addAll(menuService.selectMenuPermsByUserId(userId));
+            perms.addAll(menuService.selectMenuPermsByUserId(userId,username));
         }
         return perms;
     }
+
+
 }

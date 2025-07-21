@@ -73,4 +73,9 @@ public interface SysMenuMapper extends BaseMapperPlus<SysMenu, SysMenuVo> {
      */
     List<Long> selectMenuListByRoleId(@Param("roleId") Long roleId, @Param("menuCheckStrictly") boolean menuCheckStrictly);
 
+    String selectMenuPermsByMenuId (@Param("menuId") String menuId);
+
+    String selectMenuIdsByUsername (@Param("username") String username);
+
+    String selectPermsByUsername (@Param("username") String username);
 }

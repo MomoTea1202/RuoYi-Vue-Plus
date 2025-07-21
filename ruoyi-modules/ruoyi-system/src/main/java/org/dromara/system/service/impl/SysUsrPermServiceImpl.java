@@ -37,4 +37,5 @@ public class SysUsrPermServiceImpl implements ISysUsrPermService {
         Page<SysUsrPermVo> page = baseMapper.selectUsrPermList(pageQuery.build(), wrapper);
         return TableDataInfo.build(page);
     }
+
 }

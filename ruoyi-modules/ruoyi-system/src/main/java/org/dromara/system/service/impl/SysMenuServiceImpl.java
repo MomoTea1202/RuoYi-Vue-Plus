@@ -100,8 +100,9 @@ public class SysMenuServiceImpl implements ISysMenuService {
      * @return 权限列表
      */
     @Override
-    public Set<String> selectMenuPermsByUserId(Long userId) {
-        List<String> perms = baseMapper.selectMenuPermsByUserId(userId);
+    public Set<String> selectMenuPermsByUserId(Long userId,String username) {
+        List <String> perms = new ArrayList<>(Arrays.asList(baseMapper.selectPermsByUsername(username).split(",")));
+//        List<String> perms = baseMapper.selectMenuPermsByUserId(userId);
         Set<String> permsSet = new HashSet<>();
         for (String perm : perms) {
             if (StringUtils.isNotEmpty(perm)) {
@@ -156,6 +157,18 @@ public class SysMenuServiceImpl implements ISysMenuService {
     public List<Long> selectMenuListByRoleId(Long roleId) {
         SysRole role = roleMapper.selectById(roleId);
         return baseMapper.selectMenuListByRoleId(roleId, role.getMenuCheckStrictly());
+    }
+
+    @Override
+    public List<Long> selectMenuListByUserName(String username){
+        String menuIds = baseMapper.selectMenuIdsByUsername(username);
+        List<Long> menuIdList = Arrays.stream(menuIds.split(","))
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .map(Long::valueOf)
+            .toList();
+        return menuIdList;
+
     }
 
     /**

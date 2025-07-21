@@ -102,6 +102,16 @@ public class SysMenuController extends BaseController {
         return R.ok(selectVo);
     }
 
+    @SaCheckPermission("system:menu:query")
+    @GetMapping(value = "/subAccPermMenuTreeselect/{userName}")
+    public R<MenuTreeSelectVo> subAccPermMenuTreeselect(@PathVariable("userName") String userName) {
+        List<SysMenuVo> menus = menuService.selectMenuList(LoginHelper.getUserId());
+        MenuTreeSelectVo selectVo = new MenuTreeSelectVo(
+            menuService.selectMenuListByUserName(userName),
+            menuService.buildMenuTreeSelect(menus));
+        return R.ok(selectVo);
+    }
+
     /**
      * 加载对应租户套餐菜单列表树
      *
