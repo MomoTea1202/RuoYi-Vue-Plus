@@ -9,8 +9,8 @@
     </resultMap>
 
     <select id="selectUsrPermList" resultMap="SysUsrPrmResult">
-        SELECT user_name ,tenant_id ,user_perm
-        FROM v_user_per_menus
+        SELECT username, perm_list, tenant_id
+        FROM each_usr_perm
         ${ew.getCustomSqlSegment}
     </select>
 

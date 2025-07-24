@@ -73,10 +73,11 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
 
 
     private Wrapper<SysUser> buildQueryWrapper(SearchCriteria searchCriteria, PageQuery pageQuery) {
-        Map<String, Object> params = searchCriteria.getSearchParams();
+        Map<String, Object> params = searchCriteria.getParams();
         QueryWrapper<SysUser> wrapper = Wrappers.query();
 
         wrapper.eq("u.del_flag", SystemConstants.NORMAL)
+            .isNull("u.parent_id")
             .eq(params.containsKey("usrId") && StringUtils.isNotBlank((String) params.get("usrId")), "u.user_id", params.get("usrId"))
             .like(params.containsKey("userName") && StringUtils.isNotBlank((String) params.get("userName")), "u.user_name", params.get("userName"))
             .like(params.containsKey("nickName") && StringUtils.isNotBlank((String) params.get("nickName")), "u.nick_name", params.get("nickName"))

@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class SysUsrPerm {
-    private String userName;
-    private String userPerm;
+    private String username;
+    private String permList;
 }

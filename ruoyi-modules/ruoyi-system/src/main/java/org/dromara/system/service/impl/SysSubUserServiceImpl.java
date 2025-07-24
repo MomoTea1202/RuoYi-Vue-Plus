@@ -74,7 +74,7 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
 
 
     private Wrapper<SysUser> buildQueryWrapper(SearchCriteria searchCriteria, PageQuery pageQuery) {
-        Map<String, Object> params = searchCriteria.getSearchParams();
+        Map<String, Object> params = searchCriteria.getParams();
         QueryWrapper<SysUser> wrapper = Wrappers.query();
         String loginUser=LoginHelper.getUserIdStr();
         wrapper.eq("u.del_flag", SystemConstants.NORMAL)
