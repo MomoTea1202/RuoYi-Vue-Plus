@@ -14,7 +14,7 @@
     <select id="selectPageUserList" resultMap="SysUserResult">
         SELECT u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex,
         u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, u.parent_id,
-        d.dept_name
+        d.dept_name, u.parent_id
         FROM sys_user u
         LEFT JOIN sys_dept d ON u.dept_id = d.dept_id
         ${ew.getCustomSqlSegment}

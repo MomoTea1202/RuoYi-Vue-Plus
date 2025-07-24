@@ -46,3 +46,4 @@ nbdist/
 !*/build/*.xml
 
 .flattened-pom.xml
+/ruoyi-admin/src/main/resources/application-local.yml

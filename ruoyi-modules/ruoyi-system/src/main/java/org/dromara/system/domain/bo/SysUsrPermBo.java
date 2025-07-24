@@ -9,6 +9,6 @@ import org.dromara.system.domain.SysUsrPerm;
 @Data
 @AutoMapper(target = SysUsrPerm.class, reverseConvertGenerate = false)
 public class SysUsrPermBo {
-    private String userName;
-    private String userPerm;
+    private String username;
+    private String permList;
 }

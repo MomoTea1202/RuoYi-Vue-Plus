@@ -14,7 +14,7 @@ public class SearchCriteria {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @JsonProperty("params")
-    private Map<String, Object> searchParams = new HashMap<>();
+    private Map<String, Object> params = new HashMap<>();
 
 
 }

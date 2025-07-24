@@ -12,9 +12,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.SysUsrPerm;
 import org.dromara.system.domain.bo.SysUsrPermBo;
-import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.domain.vo.SysUsrPermVo;
-import org.dromara.system.mapper.SysUserMapper;
 import org.dromara.system.mapper.SysUsrPermMapper;
 import org.dromara.system.service.ISysUsrPermService;
 import org.springframework.stereotype.Service;
@@ -31,8 +29,8 @@ public class SysUsrPermServiceImpl implements ISysUsrPermService {
     public TableDataInfo<SysUsrPermVo> selectUsrPermList(SysUsrPermBo user, PageQuery pageQuery){
 
         QueryWrapper<SysUsrPerm> wrapper = Wrappers.query();
-        wrapper.like(StringUtils.isNotBlank(user.getUserName()), "user_name", user.getUserName())
-            .like(StringUtils.isNotBlank(user.getUserPerm()), "user_perm", user.getUserPerm()  );
+        wrapper.like(StringUtils.isNotBlank(user.getUsername()), "username", user.getUsername())
+            .like(StringUtils.isNotBlank(user.getPermList()), "permList", user.getPermList()  );
 
         Page<SysUsrPermVo> page = baseMapper.selectUsrPermList(pageQuery.build(), wrapper);
         return TableDataInfo.build(page);
