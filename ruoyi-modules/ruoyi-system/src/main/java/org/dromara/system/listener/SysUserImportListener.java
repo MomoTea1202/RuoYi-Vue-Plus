@@ -63,7 +63,7 @@ public class SysUserImportListener extends AnalysisEventListener<SysUserImportVo
                 ValidatorUtils.validate(user);
                 user.setPassword(password);
                 user.setCreateBy(operUserId);
-                userService.insertUser(user);
+                userService.insertUser(user,user.getPassword());
                 successNum++;
                 successMsg.append("<br/>").append(successNum).append("、账号 ").append(user.getUserName()).append(" 导入成功");
             } else if (isUpdateSupport) {

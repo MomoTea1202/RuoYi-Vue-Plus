@@ -149,7 +149,7 @@ public interface ISysUserService {
      * @param user 用户信息
      * @return 结果
      */
-    int insertUser(SysUserBo user);
+    int insertUser(SysUserBo user,String nPassword);
 
     /**
      * 注册用户信息

@@ -167,8 +167,9 @@ public class SysUserController extends BaseController {
                 return R.fail("当前租户下用户名额不足，请联系管理员");
             }
         }
+        String normalPassword = user.getPassword();
         user.setPassword(BCrypt.hashpw(user.getPassword()));
-        return toAjax(userService.insertUser(user));
+        return toAjax(userService.insertUser(user,normalPassword));
     }
 
     /**

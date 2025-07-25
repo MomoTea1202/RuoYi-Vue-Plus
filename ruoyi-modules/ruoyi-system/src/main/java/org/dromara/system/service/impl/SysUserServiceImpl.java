@@ -11,6 +11,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import jakarta.annotation.Resource;
 import jodd.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,8 @@ import org.dromara.common.core.domain.dto.UserDTO;
 import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.service.UserService;
 import org.dromara.common.core.utils.*;
+import org.dromara.common.mail.domain.bo.NtfEmlBo;
+import org.dromara.common.mail.utils.MailUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
@@ -32,12 +37,15 @@ import org.dromara.system.domain.vo.SysUserExportVo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.*;
 import org.dromara.system.service.ISysUserService;
+import org.mybatis.logging.Logger;
+import org.mybatis.logging.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.activation.DataSource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,6 +68,10 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     private final SysUserRoleMapper userRoleMapper;
     private final SysUserPostMapper userPostMapper;
     private final EachUsrPermMapper usrPermMapper;
+    private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
+
+
+    private static final Logger logger = LoggerFactory.getLogger(SysUserServiceImpl.class);
 
     @Override
     public TableDataInfo<SysUserVo> selectPageUserList(SearchCriteria searchCriteria, PageQuery pageQuery) {
@@ -379,7 +391,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insertUser(SysUserBo user) {
+    public int insertUser(SysUserBo user,String nPassword) {
         user.setParentId(null);
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
         // 新增用户信息
@@ -390,6 +402,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         // 新增用户与角色管理
         insertUserRole(user, false);
         insertUserPermission(user,false);
+        sendEmail(user,nPassword);
         return rows;
     }
 
@@ -917,6 +930,24 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
                     .in(SysPost::getPostId, postIds)
             ).stream()
             .collect(Collectors.toMap(SysPost::getPostId, SysPost::getPostName));
+    }
+    public void sendEmail(SysUserBo user,String nPassword) {
+        NtfEmlBo eml = new NtfEmlBo();
+        eml.setTo(user.getEmail());
+        eml.setEmlTplCode("NTF_USR_ADD_EML");
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("name", user.getUserName().toUpperCase());
+        properties.put("password", nPassword);
+        try {
+            DataSource attachment = null;
+            GoogleAuthenticatorKey key = gAuth.createCredentials(user.getUserName().toUpperCase());
+
+            attachment = QRCodeUtil.getQrCodeAttachmentFile(key.getKey(), user.getUserName(), "EZpay",200, 200);
+            eml.setMapVar(properties);
+            MailUtils.sendEmail(eml,  attachment);
+        } catch (Exception e) {
+            logger.error(() -> e.getMessage(), e);
+        }
     }
 
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.common.mail.mapper.NtfEmlTplMapper">
+
+    <resultMap type="org.dromara.common.mail.domain.vo.NtfEmlTplVo" id="NtfEmlTplResult">
+        <id property="emlTplCode" column="eml_tpl_code"/>
+    </resultMap>
+
+    <select id="selectEmlTplByEmlTplCode" parameterType="String" resultMap="NtfEmlTplResult">
+        select *
+        from ntf_eml_tpl
+        where eml_tpl_code = #{emlTplCode}
+    </select>
+
+</mapper>
