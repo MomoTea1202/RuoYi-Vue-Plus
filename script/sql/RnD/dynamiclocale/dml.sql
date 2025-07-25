@@ -18,6 +18,6 @@ INSERT INTO `sys_locale` ( `locale`, `code`, `value`) VALUES
     ( 'en-US', 'page.login.pwdLogin.loginToYourAcc', 'Login To Account '),
     ( 'zh-CN', 'page.login.pwdLogin.loginToYourAcc', '登录到您的账户'),
     ( 'en-US', 'page.login.pwdLogin.welcomeToLogin', 'Welcome Back！ Please Fill In Your Account Information '),
-    ( 'zh-CN', 'page.login.pwdLogin.welcomeToLogin', '欢迎回来！请输入您的账户信息')
+    ( 'zh-CN', 'page.login.pwdLogin.welcomeToLogin', '欢迎回来！请输入您的账户信息');
 
 
