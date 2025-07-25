@@ -10,7 +10,7 @@ INSERT INTO `sys_locale` ( `locale`, `code`, `value`) VALUES
     ( 'en-US', 'page.login.pwdLogin.forgetPassword', 'Forget Password'),
     ( 'zh-CN', 'page.login.pwdLogin.forgetPassword', '忘记密码'),
     ( 'en-US', 'common.login', 'Login '),
-    ( 'zh-CN', 'common.login', '登录')，
+    ( 'zh-CN', 'common.login', '登录'),
     ( 'en-US', 'form.userName.required', 'Username Are Require'),
     ( 'zh-CN', 'form.userName.required', '账号必须填'),
     ( 'en-US', 'form.pwd.required', 'Password Are Require '),
