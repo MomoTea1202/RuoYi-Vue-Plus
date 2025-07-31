@@ -1,4 +1,4 @@
-package org.dromara.common.mail.domain.bo;
+package org.dromara.system.domain.bo;
 
 
 import lombok.Data;
@@ -11,7 +11,7 @@ public class NtfEmlBo {
     private String from;
     private String sbj;
     private String emlTplCode;
-    private Map<String, Object> mapVar;
+    private Map<String, String> mapVar;
     private String appNm;
     public NtfEmlBo() {
         super();

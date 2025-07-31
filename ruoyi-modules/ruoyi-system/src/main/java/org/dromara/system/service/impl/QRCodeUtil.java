@@ -23,7 +23,9 @@ public class QRCodeUtil {
         String qrContent = "otpauth://totp/" + usrId.toUpperCase() + "?secret=" + userSecretKey
             + "&issuer=MY-" + appNm.toUpperCase() + "&algorithm=SHA1&digits=6&period=30";
         final InputStream inputStream = new ByteArrayInputStream(getQRCodeInByte(qrContent, 200, 200));
-        attachment = new ByteArrayDataSource(inputStream, "application/octet-stream");
+        ByteArrayDataSource attachmentClass = new ByteArrayDataSource(inputStream, "application/octet-stream");
+        attachmentClass.setName("qr.png");
+        attachment = attachmentClass;
         return attachment;
     }
 

@@ -9,26 +9,18 @@ import cn.hutool.extra.mail.JakartaMail;
 import cn.hutool.extra.mail.JakartaUserPassAuthenticator;
 import cn.hutool.extra.mail.MailAccount;
 import jakarta.mail.Authenticator;
-import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
-import jakarta.mail.internet.MimeMessage;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.core.utils.StringUtils;
-import org.dromara.common.mail.domain.NtfEmlTpl;
-import org.dromara.common.mail.domain.bo.NtfEmlBo;
-import org.dromara.common.mail.mapper.NtfEmlTplMapper;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import jakarta.activation.DataSource;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+
+import java.io.*;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,10 +31,7 @@ import java.util.Map.Entry;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MailUtils {
 
-    private static NtfEmlTplMapper mailMapper;
-
-    private static JavaMailSender emlSender;
-    private static SpringTemplateEngine tplEng;
+    private static final SpringTemplateEngine tplEng = SpringUtils.getBean(SpringTemplateEngine.class);
 
     private static final MailAccount ACCOUNT = SpringUtils.getBean(MailAccount.class);
 
@@ -482,41 +471,17 @@ public class MailUtils {
         return result;
     }
     // ------------------------------------------------------------------------------------------------------------------------ Private method end
-    public static void sendEmail(NtfEmlBo ntfEmlBo, DataSource attachment){
-        if (null == ntfEmlBo) {
-            return;
-        }
-        NtfEmlTpl ntfEmlTpl = mailMapper.selectEmlTplByEmlTplCode(ntfEmlBo.getEmlTplCode());
-        if (null == ntfEmlTpl) {
-            return;
-        }
+ public static void sendEmlWithTpl (String sndrEml, String to, String subject, String msg, DataSource attachment){
 
-        String appNm ="Ezpay";
-        String htmlBodyCtn = null;
-        String sndrEml = null;
-        if (org.apache.commons.lang3.StringUtils.isBlank(ntfEmlBo.getFrom())) {
-            sndrEml = ntfEmlTpl.getSndrEml();
-        } else {
-            sndrEml = ntfEmlBo.getFrom();
-        }
-        MimeMessage msg = emlSender.createMimeMessage();
+         final JakartaMail mail = JakartaMail.create(getMailAccount()).setUseGlobalSession(true);
 
-        try {
-            MimeMessageHelper helper = new MimeMessageHelper(msg, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                StandardCharsets.UTF_8.name());
-            Context ctx = new Context();
-            ctx.setVariables(ntfEmlBo.getMapVar());
-            helper.setFrom(sndrEml);
-            helper.setTo(ntfEmlBo.getTo());
-            helper.setSubject(ntfEmlTpl.getEmlSbj().replace("<ApplicationName>",appNm));
-            htmlBodyCtn = tplEng.process(ntfEmlTpl.getEmlTplCode(), ctx);
-            helper.setText(htmlBodyCtn, true);
-            if (null != attachment) {
-                helper.addAttachment("qrcode.png", attachment);
-            }
-            emlSender.send(msg);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
-    }
+         mail.setTos(to);
+         mail.setTitle(subject);
+         mail.setContent(msg);
+         mail.setHtml(true);
+         mail.setAttachments(attachment);
+         // 3. 发送：调用接收 File 的 sendHtml
+     mail.send();
+
+ }
 }

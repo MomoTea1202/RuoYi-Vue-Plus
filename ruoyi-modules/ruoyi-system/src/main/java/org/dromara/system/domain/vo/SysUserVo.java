@@ -142,5 +142,6 @@ public class SysUserVo implements Serializable {
     private String parentId;
 
     private String parentName;
+    private String secretKey;
 
 }

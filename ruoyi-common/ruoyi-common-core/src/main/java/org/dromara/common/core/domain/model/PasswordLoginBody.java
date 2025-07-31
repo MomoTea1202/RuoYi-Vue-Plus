@@ -1,6 +1,8 @@
 package org.dromara.common.core.domain.model;
 
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
@@ -27,5 +29,8 @@ public class PasswordLoginBody extends LoginBody {
     @NotBlank(message = "{user.password.not.blank}")
     @Length(min = 5, max = 30, message = "{user.password.length.valid}")
     private String password;
+
+    @Digits(integer = 6, fraction = 0, message = "验证码必须是6位数字")
+    private Integer verificationCode;
 
 }

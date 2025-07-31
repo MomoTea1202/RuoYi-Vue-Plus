@@ -1,4 +1,4 @@
-package org.dromara.common.mail.domain;
+package org.dromara.system.domain;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;

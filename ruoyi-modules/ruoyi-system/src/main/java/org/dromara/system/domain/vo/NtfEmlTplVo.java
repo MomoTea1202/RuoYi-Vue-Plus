@@ -1,4 +1,4 @@
-package org.dromara.common.mail.domain.vo;
+package org.dromara.system.domain.vo;
 
 import lombok.Data;
 

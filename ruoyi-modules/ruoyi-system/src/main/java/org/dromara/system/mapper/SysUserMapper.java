@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.dromara.common.mybatis.annotation.DataColumn;
 import org.dromara.common.mybatis.annotation.DataPermission;
 import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
@@ -128,4 +130,11 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
     })
     int updateById(@Param(Constants.ENTITY) SysUser user);
     String selectUsernameByUserId (@Param("userId") Long userId);
+
+    @Update("UPDATE sys_user SET google_secret = #{secret} WHERE user_id = #{userId}")
+    void updateGoogleSecret(@Param("userId") Long userId, @Param("secret") String secret);
+
+    // 获取用户的 2FA secret
+    @Select("SELECT google_secret FROM sys_user WHERE user_id = #{userId}")
+    String getGoogleSecret(@Param("userId") Long userId);
 }

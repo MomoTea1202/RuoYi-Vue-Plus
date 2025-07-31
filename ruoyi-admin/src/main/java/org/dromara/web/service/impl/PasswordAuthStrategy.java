@@ -16,6 +16,7 @@ import org.dromara.common.core.enums.LoginType;
 import org.dromara.common.core.exception.user.CaptchaException;
 import org.dromara.common.core.exception.user.CaptchaExpireException;
 import org.dromara.common.core.exception.user.UserException;
+import org.dromara.common.core.exception.user.VerificationException;
 import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.core.utils.ValidatorUtils;
@@ -28,6 +29,7 @@ import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.vo.SysClientVo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.SysUserMapper;
+import org.dromara.system.service.GoogleTwoFAService;
 import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.service.IAuthStrategy;
 import org.dromara.web.service.SysLoginService;
@@ -46,6 +48,7 @@ public class PasswordAuthStrategy implements IAuthStrategy {
     private final CaptchaProperties captchaProperties;
     private final SysLoginService loginService;
     private final SysUserMapper userMapper;
+    private final GoogleTwoFAService googleTwoFAService;
 
     @Override
     public LoginVo login(String body, SysClientVo client) {
@@ -54,18 +57,30 @@ public class PasswordAuthStrategy implements IAuthStrategy {
         String tenantId = loginBody.getTenantId();
         String username = loginBody.getUsername();
         String password = loginBody.getPassword();
+        Integer  otp = loginBody.getVerificationCode();
         String code = loginBody.getCode();
         String uuid = loginBody.getUuid();
 
         boolean captchaEnabled = captchaProperties.getEnable();
         // 验证码开关
         if (captchaEnabled) {
+
             validateCaptcha(tenantId, username, code, uuid);
         }
+        SysUserVo user = loadUserByUsername(username);
+
+        if(!StringUtils.equals("admin",username)){
+            String secretKey = userMapper.getGoogleSecret(user.getUserId());
+            boolean Sfa =googleTwoFAService.verifyCode(user.getUserId(),otp,secretKey);
+            if (!Sfa){
+                throw new VerificationException();
+            }
+        }
         LoginUser loginUser = TenantHelper.dynamic(tenantId, () -> {
-            SysUserVo user = loadUserByUsername(username);
+
             loginService.checkLogin(LoginType.PASSWORD, tenantId, username, () -> !BCrypt.checkpw(password, user.getPassword()));
             // 此处可根据登录用户的数据不同 自行创建 loginUser
+
             return loginService.buildLoginUser(user);
         });
         loginUser.setClientKey(client.getClientKey());
