@@ -10,3 +10,10 @@ CREATE TABLE IF NOT EXISTS `ntf_eml_tpl` (
   `sndr_eml` varchar(100) DEFAULT NULL COMMENT 'Sender Email',
   PRIMARY KEY (`eml_tpl_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='Notification Email Template';
+
+ALTER TABLE sys_user
+  ADD COLUMN `google_secret` VARCHAR(32)
+    NULL
+    DEFAULT NULL
+    COMMENT '用户TOTP密钥'
+    COLLATE utf8mb4_0900_ai_ci;
