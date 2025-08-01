@@ -41,6 +41,7 @@ import org.mybatis.logging.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -932,6 +933,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             ).stream()
             .collect(Collectors.toMap(SysPost::getPostId, SysPost::getPostName));
     }
+    @Async
     public void sendEmail(SysUserBo user,String nPassword) {
         NtfEmlBo eml = new NtfEmlBo();
         eml.setTo(user.getEmail());

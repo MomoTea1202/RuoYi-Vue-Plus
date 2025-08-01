@@ -471,17 +471,16 @@ public class MailUtils {
         return result;
     }
     // ------------------------------------------------------------------------------------------------------------------------ Private method end
- public static void sendEmlWithTpl (String sndrEml, String to, String subject, String msg, DataSource attachment){
+     public static void sendEmlWithTpl (String sndrEml, String to, String subject, String msg, DataSource attachment){
 
-         final JakartaMail mail = JakartaMail.create(getMailAccount()).setUseGlobalSession(true);
+             final JakartaMail mail = JakartaMail.create(getMailAccount()).setUseGlobalSession(true);
 
-         mail.setTos(to);
-         mail.setTitle(subject);
-         mail.setContent(msg);
-         mail.setHtml(true);
-         mail.setAttachments(attachment);
-         // 3. 发送：调用接收 File 的 sendHtml
-     mail.send();
+             mail.setTos(to);
+             mail.setTitle(subject);
+             mail.setContent(msg);
+             mail.setHtml(true);
+             mail.setAttachments(attachment);
+         mail.send();
 
- }
+     }
 }
