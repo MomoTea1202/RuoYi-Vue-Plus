@@ -97,8 +97,6 @@ public class SysDeptController extends BaseController {
         } else if (StringUtils.equals(SystemConstants.DISABLE, dept.getStatus())) {
             if (deptService.selectNormalChildrenDeptById(deptId) > 0) {
                 return R.fail("该部门包含未停用的子部门!");
-            } else if (deptService.checkDeptExistUser(deptId)) {
-                return R.fail("该部门下存在已分配用户，不能禁用!");
             }
         }
         return toAjax(deptService.updateDept(dept));
@@ -118,9 +116,6 @@ public class SysDeptController extends BaseController {
         }
         if (deptService.hasChildByDeptId(deptId)) {
             return R.warn("存在下级部门,不允许删除");
-        }
-        if (deptService.checkDeptExistUser(deptId)) {
-            return R.warn("部门存在用户,不允许删除");
         }
         if (postService.countPostByDeptId(deptId) > 0) {
             return R.warn("部门存在岗位,不允许删除");

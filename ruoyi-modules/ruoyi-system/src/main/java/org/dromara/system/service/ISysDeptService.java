@@ -88,13 +88,6 @@ public interface ISysDeptService {
      */
     boolean hasChildByDeptId(Long deptId);
 
-    /**
-     * 查询部门是否存在用户
-     *
-     * @param deptId 部门ID
-     * @return 结果 true 存在 false 不存在
-     */
-    boolean checkDeptExistUser(Long deptId);
 
     /**
      * 校验部门名称是否唯一

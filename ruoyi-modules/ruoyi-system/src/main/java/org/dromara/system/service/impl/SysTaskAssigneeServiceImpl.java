@@ -59,7 +59,7 @@ public class SysTaskAssigneeServiceImpl implements TaskAssigneeService {
         TableDataInfo<SysRoleVo> page = roleService.selectPageRoleList(bo, pageQuery);
         // 使用封装的字段映射方法进行转换
         List<TaskAssigneeDTO.TaskHandler> handlers = TaskAssigneeDTO.convertToHandlerList(page.getRows(),
-            SysRoleVo::getRoleId, SysRoleVo::getRoleKey, SysRoleVo::getRoleName, null, SysRoleVo::getCreateTime);
+            SysRoleVo::getRoleId, SysRoleVo::getRoleKey, SysRoleVo::getRoleName, SysRoleVo::getCreateTime);
         return new TaskAssigneeDTO(page.getTotal(), handlers);
     }
 
@@ -83,7 +83,7 @@ public class SysTaskAssigneeServiceImpl implements TaskAssigneeService {
         TableDataInfo<SysPostVo> page = postService.selectPagePostList(bo, pageQuery);
         // 使用封装的字段映射方法进行转换
         List<TaskAssigneeDTO.TaskHandler> handlers = TaskAssigneeDTO.convertToHandlerList(page.getRows(),
-            SysPostVo::getPostId, SysPostVo::getPostCategory, SysPostVo::getPostName, SysPostVo::getDeptId, SysPostVo::getCreateTime);
+            SysPostVo::getPostId, SysPostVo::getPostCategory, SysPostVo::getPostName, SysPostVo::getCreateTime);
         return new TaskAssigneeDTO(page.getTotal(), handlers);
     }
 
@@ -107,7 +107,7 @@ public class SysTaskAssigneeServiceImpl implements TaskAssigneeService {
         TableDataInfo<SysDeptVo> page = deptService.selectPageDeptList(bo, pageQuery);
         // 使用封装的字段映射方法进行转换
         List<TaskAssigneeDTO.TaskHandler> handlers = TaskAssigneeDTO.convertToHandlerList(page.getRows(),
-            SysDeptVo::getDeptId, SysDeptVo::getDeptCategory, SysDeptVo::getDeptName, SysDeptVo::getParentId, SysDeptVo::getCreateTime);
+            SysDeptVo::getDeptId, SysDeptVo::getDeptCategory, SysDeptVo::getDeptName, SysDeptVo::getCreateTime);
         return new TaskAssigneeDTO(page.getTotal(), handlers);
     }
 
@@ -127,11 +127,10 @@ public class SysTaskAssigneeServiceImpl implements TaskAssigneeService {
         Map<String, Object> params = bo.getParams();
         params.put("beginTime", taskQuery.getBeginTime());
         params.put("endTime", taskQuery.getEndTime());
-        bo.setDeptId(Convert.toLong(taskQuery.getGroupId()));
         TableDataInfo<SysUserVo> page = userService.selectPageUserList(bo, pageQuery);
         // 使用封装的字段映射方法进行转换
         List<TaskAssigneeDTO.TaskHandler> handlers = TaskAssigneeDTO.convertToHandlerList(page.getRows(),
-            SysUserVo::getUserId, SysUserVo::getUserName, SysUserVo::getNickName, SysUserVo::getDeptId, SysUserVo::getCreateTime);
+            SysUserVo::getUserId, SysUserVo::getUserName, SysUserVo::getNickName, SysUserVo::getCreateTime);
         return new TaskAssigneeDTO(page.getTotal(), handlers);
     }
 

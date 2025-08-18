@@ -28,11 +28,6 @@ public enum TaskAssigneeEnum {
     ROLE("角色", "role:"),
 
     /**
-     * 部门
-     */
-    DEPT("部门", "dept:"),
-
-    /**
      * 岗位
      */
     POST("岗位", "post:");

@@ -76,13 +76,6 @@ public interface UserService {
      */
     List<UserDTO> selectUsersByRoleIds(List<Long> roleIds);
 
-    /**
-     * 通过部门ID查询用户
-     *
-     * @param deptIds 部门ids
-     * @return 用户
-     */
-    List<UserDTO> selectUsersByDeptIds(List<Long> deptIds);
 
     /**
      * 通过岗位ID查询用户

@@ -30,11 +30,6 @@ public class SysUserBo extends BaseEntity {
     private Long userId;
 
     /**
-     * 部门ID
-     */
-    private Long deptId;
-
-    /**
      * 用户账号
      */
     @Xss(message = "用户账号不能包含脚本字符")
@@ -92,11 +87,6 @@ public class SysUserBo extends BaseEntity {
      */
 
     private Long[] roleIds;
-
-    /**
-     * 岗位组
-     */
-    private Long[] postIds;
 
     /**
      * 数据权限 当前角色ID

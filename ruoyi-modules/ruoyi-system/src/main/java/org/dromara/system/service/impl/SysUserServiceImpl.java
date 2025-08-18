@@ -142,12 +142,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             .like(StringUtils.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
             .between(params.get("beginTime") != null && params.get("endTime") != null,
                 "u.create_time", params.get("beginTime"), params.get("endTime"))
-            .and(ObjectUtil.isNotNull(user.getDeptId()), w -> {
-                List<SysDept> deptList = deptMapper.selectListByParentId(user.getDeptId());
-                List<Long> ids = StreamUtils.toList(deptList, SysDept::getDeptId);
-                ids.add(user.getDeptId());
-                w.in("u.dept_id", ids);
-            }).orderByAsc("u.user_id");
+            .orderByAsc("u.user_id");
         return baseMapper.selectUserExportList(wrapper);
     }
 
@@ -162,13 +157,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             .eq(StringUtils.isNotBlank(user.getStatus()), "u.status", user.getStatus())
             .like(StringUtils.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
             .between(params.get("beginTime") != null && params.get("endTime") != null,
-                "u.create_time", params.get("beginTime"), params.get("endTime"))
-            .and(ObjectUtil.isNotNull(user.getDeptId()), w -> {
-                List<SysDept> deptList = deptMapper.selectListByParentId(user.getDeptId());
-                List<Long> ids = StreamUtils.toList(deptList, SysDept::getDeptId);
-                ids.add(user.getDeptId());
-                w.in("u.dept_id", ids);
-            });
+                "u.create_time", params.get("beginTime"), params.get("endTime"));
 
         if (StringUtils.isNotBlank(user.getExcludeUserIds())) {
             wrapper.notIn("u.user_id", StringUtils.splitList(user.getExcludeUserIds()));
@@ -273,15 +262,13 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * 通过用户ID串查询用户
      *
      * @param userIds 用户ID串
-     * @param deptId  部门id
      * @return 用户列表信息
      */
     @Override
-    public List<SysUserVo> selectUserByIds(List<Long> userIds, Long deptId) {
+    public List<SysUserVo> selectUserByIds(List<Long> userIds) {
         return baseMapper.selectUserList(new LambdaQueryWrapper<SysUser>()
             .select(SysUser::getUserId, SysUser::getUserName, SysUser::getNickName)
             .eq(SysUser::getStatus, SystemConstants.NORMAL)
-            .eq(ObjectUtil.isNotNull(deptId), SysUser::getDeptId, deptId)
             .in(CollUtil.isNotEmpty(userIds), SysUser::getUserId, userIds));
     }
 
@@ -399,8 +386,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         // 新增用户信息
         int rows = baseMapper.insert(sysUser);
         user.setUserId(sysUser.getUserId());
-        // 新增用户岗位关联
-        insertUserPost(user, false);
         // 新增用户与角色管理
         insertUserRole(user, false);
         insertUserPermission(user,false);
@@ -436,7 +421,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         // 新增用户与角色管理
         insertUserRole(user, true);
         // 新增用户与岗位管理
-        insertUserPost(user, true);
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
         // 防止错误更新后导致的数据误删除
         int flag = baseMapper.updateById(sysUser);
@@ -531,29 +515,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         this.insertUserRole(user.getUserId(), user.getRoleIds(), clear);
     }
 
-    /**
-     * 新增用户岗位信息
-     *
-     * @param user  用户对象
-     * @param clear 清除已存在的关联数据
-     */
-    private void insertUserPost(SysUserBo user, boolean clear) {
-        Long[] posts = user.getPostIds();
-        if (ArrayUtil.isNotEmpty(posts)) {
-            if (clear) {
-                // 删除用户与岗位关联
-                userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().eq(SysUserPost::getUserId, user.getUserId()));
-            }
-            // 新增用户与岗位管理
-            List<SysUserPost> list = StreamUtils.toList(List.of(posts), postId -> {
-                SysUserPost up = new SysUserPost();
-                up.setUserId(user.getUserId());
-                up.setPostId(postId);
-                return up;
-            });
-            userPostMapper.insertBatch(list);
-        }
-    }
     private void insertUserPermission (SysUserBo user, boolean clear){
         Long[] role = user.getRoleIds();
         if (ArrayUtil.isNotEmpty(role)) {
@@ -674,20 +635,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     }
 
     /**
-     * 通过部门id查询当前部门所有用户
-     *
-     * @param deptId 部门ID
-     * @return 用户信息集合信息
-     */
-    @Override
-    public List<SysUserVo> selectUserListByDept(Long deptId) {
-        LambdaQueryWrapper<SysUser> lqw = Wrappers.lambdaQuery();
-        lqw.eq(SysUser::getDeptId, deptId);
-        lqw.orderByAsc(SysUser::getUserId);
-        return baseMapper.selectVoList(lqw);
-    }
-
-    /**
      * 通过用户ID查询用户账户
      *
      * @param userId 用户ID
@@ -771,7 +718,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             return List.of();
         }
         List<SysUserVo> list = baseMapper.selectVoList(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getUserId, SysUser::getDeptId, SysUser::getUserName,
+            .select(SysUser::getUserId, SysUser::getUserName,
                 SysUser::getNickName, SysUser::getUserType, SysUser::getEmail,
                 SysUser::getPhonenumber, SysUser::getSex, SysUser::getStatus,
                 SysUser::getCreateTime)
@@ -824,17 +771,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param deptIds 部门ids
      * @return 用户
      */
-    @Override
-    public List<UserDTO> selectUsersByDeptIds(List<Long> deptIds) {
-        if (CollUtil.isEmpty(deptIds)) {
-            return List.of();
-        }
-        List<SysUserVo> list = baseMapper.selectVoList(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getUserId, SysUser::getUserName, SysUser::getNickName, SysUser::getEmail, SysUser::getPhonenumber)
-            .eq(SysUser::getStatus, SystemConstants.NORMAL)
-            .in(SysUser::getDeptId, deptIds));
-        return BeanUtil.copyToList(list, UserDTO.class);
-    }
 
     /**
      * 通过岗位ID查询用户

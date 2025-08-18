@@ -51,7 +51,7 @@ public interface ISysSubUserService {
      * @param deptId  部门id
      * @return 用户列表信息
      */
-    List<SysUserVo> selectUserByIds(List<Long> userIds, Long deptId);
+    List<SysUserVo> selectUserByIds(List<Long> userIds);
 
     /**
      * 根据用户ID查询用户所属角色组
@@ -190,11 +190,4 @@ public interface ISysSubUserService {
      */
     int deleteUserByIds(Long[] userIds);
 
-    /**
-     * 通过部门id查询当前部门所有用户
-     *
-     * @param deptId 部门id
-     * @return 结果
-     */
-    List<SysUserVo> selectUserListByDept(Long deptId);
 }

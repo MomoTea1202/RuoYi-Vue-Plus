@@ -121,7 +121,6 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
         return switch (type) {
             case USER -> taskAssigneeService.selectUsersByTaskAssigneeList(taskQuery);
             case ROLE -> taskAssigneeService.selectRolesByTaskAssigneeList(taskQuery);
-            case DEPT -> taskAssigneeService.selectDeptsByTaskAssigneeList(taskQuery);
             case POST -> taskAssigneeService.selectPostsByTaskAssigneeList(taskQuery);
         };
     }
@@ -130,7 +129,7 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
      * 根据任务办理类型获取部门数据
      */
     private List<DeptDTO> fetchDeptData(TaskAssigneeEnum type) {
-        if (type == TaskAssigneeEnum.USER || type == TaskAssigneeEnum.DEPT || type == TaskAssigneeEnum.POST) {
+        if (type == TaskAssigneeEnum.USER  || type == TaskAssigneeEnum.POST) {
             return deptService.selectDeptsByList();
         }
         return new ArrayList<>();
@@ -154,10 +153,6 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
             .setStorageId(assignee -> type.getCode() + assignee.getStorageId())
             .setHandlerCode(assignee -> StringUtils.blankToDefault(assignee.getHandlerCode(), "无"))
             .setHandlerName(assignee -> StringUtils.blankToDefault(assignee.getHandlerName(), "无"))
-            .setGroupName(assignee -> StringUtils.defaultIfBlank(
-                Optional.ofNullable(assignee.getGroupName())
-                    .map(deptService::selectDeptNameByIds)
-                    .orElse(DEFAULT_GROUP_NAME), DEFAULT_GROUP_NAME))
             .setCreateTime(assignee -> DateUtils.parseDateToStr(FormatsType.YYYY_MM_DD_HH_MM_SS, assignee.getCreateTime()));
     }
 
@@ -201,7 +196,6 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
         return switch (type) {
             case USER -> userService.selectListByIds(ids);
             case ROLE -> userService.selectUsersByRoleIds(ids);
-            case DEPT -> userService.selectUsersByDeptIds(ids);
             case POST -> userService.selectUsersByPostIds(ids);
         };
     }
@@ -217,7 +211,6 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
         return switch (type) {
             case USER -> userService.selectUserNamesByIds(ids);
             case ROLE -> userService.selectRoleNamesByIds(ids);
-            case DEPT -> userService.selectDeptNamesByIds(ids);
             case POST -> userService.selectPostNamesByIds(ids);
         };
     }

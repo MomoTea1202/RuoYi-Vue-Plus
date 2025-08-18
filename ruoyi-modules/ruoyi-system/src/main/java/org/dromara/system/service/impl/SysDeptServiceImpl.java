@@ -251,17 +251,6 @@ public class SysDeptServiceImpl implements ISysDeptService, DeptService {
             .eq(SysDept::getParentId, deptId));
     }
 
-    /**
-     * 查询部门是否存在用户
-     *
-     * @param deptId 部门ID
-     * @return 结果 true 存在 false 不存在
-     */
-    @Override
-    public boolean checkDeptExistUser(Long deptId) {
-        return userMapper.exists(new LambdaQueryWrapper<SysUser>()
-            .eq(SysUser::getDeptId, deptId));
-    }
 
     /**
      * 校验部门名称是否唯一

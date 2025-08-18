@@ -14,7 +14,6 @@
                         r.role_sort,
                         r.data_scope,
                         r.menu_check_strictly,
-                        r.dept_check_strictly,
                         r.status,
                         r.del_flag,
                         r.create_time,
@@ -22,7 +21,6 @@
         from sys_role r
                  left join sys_user_role sur on sur.role_id = r.role_id
                  left join sys_user u on u.user_id = sur.user_id
-                 left join sys_dept d on u.dept_id = d.dept_id
     </sql>
 
     <select id="selectPageRoleList" resultMap="SysRoleResult">
