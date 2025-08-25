@@ -48,7 +48,6 @@ public interface ISysSubUserService {
      * 通过用户ID串查询用户
      *
      * @param userIds 用户ID串
-     * @param deptId  部门id
      * @return 用户列表信息
      */
     List<SysUserVo> selectUserByIds(List<Long> userIds);
@@ -60,14 +59,6 @@ public interface ISysSubUserService {
      * @return 结果
      */
     String selectUserRoleGroup(Long userId);
-
-    /**
-     * 根据用户ID查询用户所属岗位组
-     *
-     * @param userId 用户ID
-     * @return 结果
-     */
-    String selectUserPostGroup(Long userId);
 
     /**
      * 校验用户名称是否唯一

@@ -49,10 +49,8 @@ public class SysTenantServiceImpl implements ISysTenantService {
     private final SysTenantMapper baseMapper;
     private final SysTenantPackageMapper tenantPackageMapper;
     private final SysUserMapper userMapper;
-    private final SysDeptMapper deptMapper;
     private final SysRoleMapper roleMapper;
     private final SysRoleMenuMapper roleMenuMapper;
-    private final SysRoleDeptMapper roleDeptMapper;
     private final SysUserRoleMapper userRoleMapper;
     private final SysDictTypeMapper dictTypeMapper;
     private final SysDictDataMapper dictDataMapper;
@@ -136,21 +134,6 @@ public class SysTenantServiceImpl implements ISysTenantService {
         // 根据套餐创建角色
         Long roleId = createTenantRole(tenantId, bo.getPackageId());
 
-        // 创建部门: 公司名是部门名称
-        SysDept dept = new SysDept();
-        dept.setTenantId(tenantId);
-        dept.setDeptName(bo.getCompanyName());
-        dept.setParentId(Constants.TOP_PARENT_ID);
-        dept.setAncestors(Constants.TOP_PARENT_ID.toString());
-        deptMapper.insert(dept);
-        Long deptId = dept.getDeptId();
-
-        // 角色和部门关联表
-        SysRoleDept roleDept = new SysRoleDept();
-        roleDept.setRoleId(roleId);
-        roleDept.setDeptId(deptId);
-        roleDeptMapper.insert(roleDept);
-
         // 创建系统用户
         SysUser user = new SysUser();
         user.setTenantId(tenantId);
@@ -158,11 +141,6 @@ public class SysTenantServiceImpl implements ISysTenantService {
         user.setNickName(bo.getUsername());
         user.setPassword(BCrypt.hashpw(bo.getPassword()));
         userMapper.insert(user);
-        //新增系统用户后，默认当前用户为部门的负责人
-        SysDept sd = new SysDept();
-        sd.setLeader(user.getUserId());
-        sd.setDeptId(deptId);
-        deptMapper.updateById(sd);
 
         // 用户和角色关联表
         SysUserRole userRole = new SysUserRole();

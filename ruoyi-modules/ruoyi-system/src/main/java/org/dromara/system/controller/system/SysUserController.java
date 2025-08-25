@@ -49,8 +49,6 @@ public class SysUserController extends BaseController {
 
     private final ISysUserService userService;
     private final ISysRoleService roleService;
-    private final ISysPostService postService;
-    private final ISysDeptService deptService;
     private final ISysTenantService tenantService;
 
     /**
@@ -267,14 +265,4 @@ public class SysUserController extends BaseController {
         userService.insertUserAuth(userId, roleIds);
         return R.ok();
     }
-
-    /**
-     * 获取部门树列表
-     */
-    @SaCheckPermission("system:user:list")
-    @GetMapping("/deptTree")
-    public R<List<Tree<Long>>> deptTree(SysDeptBo dept) {
-        return R.ok(deptService.selectDeptTreeList(dept));
-    }
-
 }

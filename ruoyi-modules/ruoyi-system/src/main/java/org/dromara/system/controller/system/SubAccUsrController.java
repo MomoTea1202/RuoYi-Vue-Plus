@@ -46,8 +46,6 @@ public class SubAccUsrController extends BaseController {
 
     private final ISysSubUserService userService;
     private final ISysRoleService roleService;
-    private final ISysPostService postService;
-    private final ISysDeptService deptService;
     private final ISysTenantService tenantService;
 
     /**
@@ -241,14 +239,6 @@ public class SubAccUsrController extends BaseController {
         return R.ok();
     }
 
-    /**
-     * 获取部门树列表
-     */
-    @SaCheckPermission("system:user:list")
-    @GetMapping("/deptTree")
-    public R<List<Tree<Long>>> deptTree(SysDeptBo dept) {
-        return R.ok(deptService.selectDeptTreeList(dept));
-    }
 
 
 }

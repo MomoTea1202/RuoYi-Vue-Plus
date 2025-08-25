@@ -60,13 +60,10 @@ import java.util.stream.Collectors;
 public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
 
     private final SysSubUserMapper baseMapper;
-    private final SysDeptMapper deptMapper;
     private final SysRoleMapper roleMapper;
-    private final SysPostMapper postMapper;
     private final SysMenuMapper menuMapper;
     private final SysUserMapper userMapper;
     private final SysUserRoleMapper userRoleMapper;
-    private final SysUserPostMapper userPostMapper;
     private final EachUsrPermMapper usrPermMapper;
     private final GoogleTwoFAService googleTwoFAService;
     private final NtfEmlTplSrv ntfEmlTplSrv;
@@ -184,21 +181,6 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
             return StringUtils.EMPTY;
         }
         return StreamUtils.join(list, SysRoleVo::getRoleName);
-    }
-
-    /**
-     * 查询用户所属岗位组
-     *
-     * @param userId 用户ID
-     * @return 结果
-     */
-    @Override
-    public String selectUserPostGroup(Long userId) {
-        List<SysPostVo> list = postMapper.selectPostsByUserId(userId);
-        if (CollUtil.isEmpty(list)) {
-            return StringUtils.EMPTY;
-        }
-        return StreamUtils.join(list, SysPostVo::getPostName);
     }
 
     /**
@@ -481,8 +463,6 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
     public int deleteUserById(Long userId) {
         // 删除用户与角色关联
         userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, userId));
-        // 删除用户与岗位表
-        userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().eq(SysUserPost::getUserId, userId));
         String username =baseMapper.selectUsernameByUserId(userId);
         usrPermMapper.delete(new LambdaQueryWrapper<EachUserPerm>().eq(EachUserPerm::getUsername, username));
         // 防止更新失败导致的数据删除
@@ -509,8 +489,6 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
         List<Long> ids = List.of(userIds);
         // 删除用户与角色关联
         userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getUserId, ids));
-        // 删除用户与岗位表
-        userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().in(SysUserPost::getUserId, ids));
         List<String> username = ids.stream()
             .map(baseMapper::selectUsernameByUserId)
             .toList();
@@ -660,21 +638,7 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
      * @param postIds 岗位ids
      * @return 用户
      */
-    @Override
-    public List<UserDTO> selectUsersByPostIds(List<Long> postIds) {
-        if (CollUtil.isEmpty(postIds)) {
-            return List.of();
-        }
 
-        // 通过岗位ID获取用户岗位信息
-        List<SysUserPost> userPosts = userPostMapper.selectList(
-            new LambdaQueryWrapper<SysUserPost>().in(SysUserPost::getPostId, postIds));
-
-        // 获取用户ID列表
-        Set<Long> userIds = StreamUtils.toSet(userPosts, SysUserPost::getUserId);
-
-        return this.selectListByIds(new ArrayList<>(userIds));
-    }
 
     /**
      * 根据用户 ID 列表查询用户名称映射关系
@@ -714,43 +678,6 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
             .collect(Collectors.toMap(SysRole::getRoleId, SysRole::getRoleName));
     }
 
-    /**
-     * 根据部门 ID 列表查询部门名称映射关系
-     *
-     * @param deptIds 部门 ID 列表
-     * @return Map，其中 key 为部门 ID，value 为对应的部门名称
-     */
-    @Override
-    public Map<Long, String> selectDeptNamesByIds(List<Long> deptIds) {
-        if (CollUtil.isEmpty(deptIds)) {
-            return Collections.emptyMap();
-        }
-        return deptMapper.selectList(
-                new LambdaQueryWrapper<SysDept>()
-                    .select(SysDept::getDeptId, SysDept::getDeptName)
-                    .in(SysDept::getDeptId, deptIds)
-            ).stream()
-            .collect(Collectors.toMap(SysDept::getDeptId, SysDept::getDeptName));
-    }
-
-    /**
-     * 根据岗位 ID 列表查询岗位名称映射关系
-     *
-     * @param postIds 岗位 ID 列表
-     * @return Map，其中 key 为岗位 ID，value 为对应的岗位名称
-     */
-    @Override
-    public Map<Long, String> selectPostNamesByIds(List<Long> postIds) {
-        if (CollUtil.isEmpty(postIds)) {
-            return Collections.emptyMap();
-        }
-        return postMapper.selectList(
-                new LambdaQueryWrapper<SysPost>()
-                    .select(SysPost::getPostId, SysPost::getPostName)
-                    .in(SysPost::getPostId, postIds)
-            ).stream()
-            .collect(Collectors.toMap(SysPost::getPostId, SysPost::getPostName));
-    }
     @Async
     public void sendEmail(SysUserBo user,String nPassword) {
         NtfEmlBo eml = new NtfEmlBo();

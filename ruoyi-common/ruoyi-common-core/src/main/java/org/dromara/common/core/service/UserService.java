@@ -78,14 +78,6 @@ public interface UserService {
 
 
     /**
-     * 通过岗位ID查询用户
-     *
-     * @param postIds 岗位ids
-     * @return 用户
-     */
-    List<UserDTO> selectUsersByPostIds(List<Long> postIds);
-
-    /**
      * 根据用户 ID 列表查询用户名称映射关系
      *
      * @param userIds 用户 ID 列表
@@ -101,20 +93,5 @@ public interface UserService {
      */
     Map<Long, String> selectRoleNamesByIds(List<Long> roleIds);
 
-    /**
-     * 根据部门 ID 列表查询部门名称映射关系
-     *
-     * @param deptIds 部门 ID 列表
-     * @return Map，其中 key 为部门 ID，value 为对应的部门名称
-     */
-    Map<Long, String> selectDeptNamesByIds(List<Long> deptIds);
-
-    /**
-     * 根据岗位 ID 列表查询岗位名称映射关系
-     *
-     * @param postIds 岗位 ID 列表
-     * @return Map，其中 key 为岗位 ID，value 为对应的岗位名称
-     */
-    Map<Long, String> selectPostNamesByIds(List<Long> postIds);
 
 }

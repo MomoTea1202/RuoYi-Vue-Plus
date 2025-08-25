@@ -49,8 +49,8 @@ public class SysProfileController extends BaseController {
     public R<ProfileVo> profile() {
         SysUserVo user = userService.selectUserById(LoginHelper.getUserId());
         String roleGroup = userService.selectUserRoleGroup(user.getUserId());
-        String postGroup = userService.selectUserPostGroup(user.getUserId());
-        ProfileVo profileVo = new ProfileVo(user, roleGroup, postGroup);
+
+        ProfileVo profileVo = new ProfileVo(user, roleGroup);
         return R.ok(profileVo);
     }
 
@@ -128,6 +128,6 @@ public class SysProfileController extends BaseController {
 
     public record AvatarVo(String imgUrl) {}
 
-    public record ProfileVo(SysUserVo user, String roleGroup, String postGroup) {}
+    public record ProfileVo(SysUserVo user, String roleGroup) {}
 
 }
