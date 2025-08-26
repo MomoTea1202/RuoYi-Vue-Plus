@@ -814,4 +814,14 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         }
     }
 
+    @Override
+    public int  change2Fa() {
+        Long loginUserId=LoginHelper.getUserId();
+        int flag = baseMapper.update2fa(loginUserId);
+        if (flag < 1) {
+            throw new ServiceException();
+        }
+        return flag;
+    }
+
 }

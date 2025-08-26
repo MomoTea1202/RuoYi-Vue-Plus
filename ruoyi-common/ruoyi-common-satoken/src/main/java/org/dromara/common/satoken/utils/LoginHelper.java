@@ -39,6 +39,8 @@ public class LoginHelper {
     public static final String DEPT_NAME_KEY = "deptName";
     public static final String DEPT_CATEGORY_KEY = "deptCategory";
     public static final String CLIENT_KEY = "clientid";
+    public static final String GOOGLE_SECRET = "googleSecret";
+
 
     /**
      * 登录系统 基于 设备类型
@@ -56,6 +58,7 @@ public class LoginHelper {
                 .setExtra(DEPT_KEY, loginUser.getDeptId())
                 .setExtra(DEPT_NAME_KEY, loginUser.getDeptName())
                 .setExtra(DEPT_CATEGORY_KEY, loginUser.getDeptCategory())
+                .setExtra(GOOGLE_SECRET,loginUser.getGoogleSecret())
         );
         StpUtil.getTokenSession().set(LOGIN_USER_KEY, loginUser);
     }
@@ -125,6 +128,7 @@ public class LoginHelper {
     public static String getDeptName() {
         return Convert.toStr(getExtra(DEPT_NAME_KEY));
     }
+    public static String getGoogleSecret(){return  Convert.toStr(getExtra(GOOGLE_SECRET));}
 
     /**
      * 获取部门类别编码

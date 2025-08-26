@@ -70,10 +70,12 @@ public class PasswordAuthStrategy implements IAuthStrategy {
         SysUserVo user = loadUserByUsername(username);
 
         if(!StringUtils.equals("admin",username)){
-            String secretKey = userMapper.getGoogleSecret(user.getUserId());
-            boolean Sfa =googleTwoFAService.verifyCode(user.getUserId(),otp,secretKey);
-            if (!Sfa){
-                throw new VerificationException();
+            if(user.getIsSfa()==true) {
+                String secretKey = userMapper.getGoogleSecret(user.getUserId());
+                boolean Sfa = googleTwoFAService.verifyCode(user.getUserId(), otp, secretKey);
+                if (!Sfa) {
+                    throw new VerificationException();
+                }
             }
         }
         LoginUser loginUser = TenantHelper.dynamic(tenantId, () -> {

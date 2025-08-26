@@ -132,6 +132,8 @@ public class LoginUser implements Serializable {
      */
     private String deviceType;
 
+    private String googleSecret;
+
     /**
      * 获取登录id
      */

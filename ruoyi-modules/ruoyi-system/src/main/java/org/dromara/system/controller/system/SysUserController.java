@@ -24,10 +24,12 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.tenant.helper.TenantHelper;
 import org.dromara.common.web.core.BaseController;
+import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.bo.*;
 import org.dromara.system.domain.vo.*;
 import org.dromara.system.listener.SysUserImportListener;
 import org.dromara.system.service.*;
+import org.dromara.system.service.impl.QRCodeUtil;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户信息
@@ -264,5 +267,22 @@ public class SysUserController extends BaseController {
         userService.checkUserDataScope(userId);
         userService.insertUserAuth(userId, roleIds);
         return R.ok();
+    }
+
+    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
+    @PutMapping("/change2fa")
+    public R<Void> change2fa() {
+        return toAjax(userService.change2Fa());
+    }
+
+    @GetMapping("/2fa/qr")
+    public R<Map<String,String>> get2faQr() {
+        Long userId = LoginHelper.getUserId();
+        SysUserVo u = userService.selectUserById(userId);
+        if (u == null || u.getIsSfa() == false) return R.fail("SFA is OFF");
+        String secret = u.getGoogleSecret();
+        if (secret == null || secret.isBlank()) return R.fail("No secret"); // 或者这里自动生成再保存
+        String qr  = QRCodeUtil.getQRPng();
+        return R.ok(Map.of("qrDataUrl", qr));
     }
 }

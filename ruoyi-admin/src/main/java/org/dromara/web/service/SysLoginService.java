@@ -154,6 +154,7 @@ public class SysLoginService {
         loginUser.setUsername(user.getUserName());
         loginUser.setNickname(user.getNickName());
         loginUser.setUserType(user.getUserType());
+        loginUser.setGoogleSecret(user.getGoogleSecret());
         loginUser.setMenuPermission(permissionService.getMenuPermission(userId,user.getUserName()));
         loginUser.setRolePermission(permissionService.getRolePermission(userId));
         List<SysRoleVo> roles = roleService.selectRolesByUserId(userId);

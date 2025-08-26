@@ -10,6 +10,8 @@ import jakarta.mail.util.ByteArrayDataSource;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import jakarta.activation.DataSource;
+import org.dromara.common.satoken.utils.LoginHelper;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +30,23 @@ public class QRCodeUtil {
         attachment = attachmentClass;
         return attachment;
     }
+    public static String getQRPng (){
+        String appNm="EZpay".toUpperCase();
+        String userSecretKey = LoginHelper.getGoogleSecret();
+        String userName = LoginHelper.getUsername().toUpperCase();
+        String qrContent = "otpauth://totp/" + userName + "?secret=" + userSecretKey
+            + "&issuer=MY-" + appNm+ "&algorithm=SHA1&digits=6&period=30";
+        try {
+            var matrix = new com.google.zxing.qrcode.QRCodeWriter()
+                .encode(qrContent, com.google.zxing.BarcodeFormat.QR_CODE, 200, 200);
+            var img = com.google.zxing.client.j2se.MatrixToImageWriter.toBufferedImage(matrix);
+            var baos = new java.io.ByteArrayOutputStream();
+            javax.imageio.ImageIO.write(img, "png", baos);
+            return "data:image/png;base64," +
+                java.util.Base64.getEncoder().encodeToString(baos.toByteArray());
+        } catch (Exception e) { throw new RuntimeException(e); }
+    }
+
 
     public static byte[] getQRCodeInByte(String text, int width, int height) throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();

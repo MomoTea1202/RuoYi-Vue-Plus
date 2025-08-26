@@ -100,6 +100,10 @@ public class SysUser extends TenantEntity {
 
     private String parentId;
 
+    private String googleSecret;
+
+    private Boolean isSfa;
+
 
     public SysUser(Long userId) {
         this.userId = userId;

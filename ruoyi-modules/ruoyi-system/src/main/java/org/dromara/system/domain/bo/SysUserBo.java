@@ -106,6 +106,9 @@ public class SysUserBo extends BaseEntity {
     private String parentId;
 
     private Long[] menuIds;
+    private String googleSecret;
+
+    private Boolean isSfa;
 
     public SysUserBo(Long userId) {
         this.userId = userId;

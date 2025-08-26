@@ -128,6 +128,7 @@ public class SysUserVo implements Serializable {
     private String parentId;
 
     private String parentName;
-    private String secretKey;
+    private String googleSecret;
+    private Boolean isSfa;
 
 }

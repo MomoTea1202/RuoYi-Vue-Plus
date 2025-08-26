@@ -216,4 +216,6 @@ public interface ISysUserService {
      * @return 结果
      */
     int deleteUserByIds(Long[] userIds);
+
+    int change2Fa();
 }
