@@ -93,10 +93,6 @@ public class SysMenuVo implements Serializable {
      */
     private String icon;
 
-    /**
-     * 创建部门
-     */
-    private Long createDept;
 
     /**
      * 备注

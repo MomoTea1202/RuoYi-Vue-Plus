@@ -58,10 +58,6 @@ public class SysRoleBo extends BaseEntity {
      */
     private Boolean menuCheckStrictly;
 
-    /**
-     * 部门树选择项是否关联显示
-     */
-    private Boolean deptCheckStrictly;
 
     /**
      * 角色状态（0正常 1停用）
@@ -77,11 +73,6 @@ public class SysRoleBo extends BaseEntity {
      * 菜单组
      */
     private Long[] menuIds;
-
-    /**
-     * 部门组（数据权限）
-     */
-    private Long[] deptIds;
 
     public SysRoleBo(Long roleId) {
         this.roleId = roleId;

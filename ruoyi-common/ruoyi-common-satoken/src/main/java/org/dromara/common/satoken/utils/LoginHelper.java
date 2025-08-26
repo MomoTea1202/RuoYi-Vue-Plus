@@ -35,9 +35,6 @@ public class LoginHelper {
     public static final String TENANT_KEY = "tenantId";
     public static final String USER_KEY = "userId";
     public static final String USER_NAME_KEY = "userName";
-    public static final String DEPT_KEY = "deptId";
-    public static final String DEPT_NAME_KEY = "deptName";
-    public static final String DEPT_CATEGORY_KEY = "deptCategory";
     public static final String CLIENT_KEY = "clientid";
     public static final String GOOGLE_SECRET = "googleSecret";
 
@@ -55,9 +52,6 @@ public class LoginHelper {
             model.setExtra(TENANT_KEY, loginUser.getTenantId())
                 .setExtra(USER_KEY, loginUser.getUserId())
                 .setExtra(USER_NAME_KEY, loginUser.getUsername())
-                .setExtra(DEPT_KEY, loginUser.getDeptId())
-                .setExtra(DEPT_NAME_KEY, loginUser.getDeptName())
-                .setExtra(DEPT_CATEGORY_KEY, loginUser.getDeptCategory())
                 .setExtra(GOOGLE_SECRET,loginUser.getGoogleSecret())
         );
         StpUtil.getTokenSession().set(LOGIN_USER_KEY, loginUser);
@@ -115,27 +109,7 @@ public class LoginHelper {
         return Convert.toStr(getExtra(TENANT_KEY));
     }
 
-    /**
-     * 获取部门ID
-     */
-    public static Long getDeptId() {
-        return Convert.toLong(getExtra(DEPT_KEY));
-    }
-
-    /**
-     * 获取部门名
-     */
-    public static String getDeptName() {
-        return Convert.toStr(getExtra(DEPT_NAME_KEY));
-    }
     public static String getGoogleSecret(){return  Convert.toStr(getExtra(GOOGLE_SECRET));}
-
-    /**
-     * 获取部门类别编码
-     */
-    public static String getDeptCategory() {
-        return Convert.toStr(getExtra(DEPT_CATEGORY_KEY));
-    }
 
     /**
      * 获取当前 Token 的扩展信息

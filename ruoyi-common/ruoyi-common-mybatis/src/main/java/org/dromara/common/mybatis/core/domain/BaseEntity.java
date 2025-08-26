@@ -30,11 +30,6 @@ public class BaseEntity implements Serializable {
     @TableField(exist = false)
     private String searchValue;
 
-    /**
-     * 创建部门
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private Long createDept;
 
     /**
      * 创建者

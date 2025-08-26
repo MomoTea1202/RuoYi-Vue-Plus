@@ -55,7 +55,6 @@ public class UserActionListener implements SaTokenListener {
         dto.setUserName(username);
         dto.setClientKey((String) loginParameter.getExtra(LoginHelper.CLIENT_KEY));
         dto.setDeviceType(loginParameter.getDeviceType());
-        dto.setDeptName((String) loginParameter.getExtra(LoginHelper.DEPT_NAME_KEY));
         TenantHelper.dynamic(tenantId, () -> {
             if(loginParameter.getTimeout() == -1) {
                 RedisUtils.setCacheObject(CacheConstants.ONLINE_TOKEN_KEY + tokenValue, dto);

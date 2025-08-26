@@ -21,7 +21,6 @@ import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.service.UserService;
 import org.dromara.common.core.utils.*;
 import org.dromara.system.domain.bo.NtfEmlBo;
-import org.dromara.common.mail.utils.MailUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.system.service.GoogleTwoFAService;
@@ -29,7 +28,6 @@ import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.*;
 import org.dromara.common.mybatis.core.page.SearchCriteria;
 import org.dromara.system.domain.bo.SysUserBo;
-import org.dromara.system.domain.vo.SysPostVo;
 import org.dromara.system.domain.vo.SysRoleVo;
 import org.dromara.system.domain.vo.SysUserExportVo;
 import org.dromara.system.domain.vo.SysUserVo;
@@ -165,10 +163,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
 
     private String getFieldWithTableName(String fieldName) {
         String fieldTargetTableName = "u.";
-        if(StringUtil.equals(fieldName,"dept_name"))
-        {
-            fieldTargetTableName = "d.";
-        }
         return fieldTargetTableName + fieldName;
     }
 
@@ -737,13 +731,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
 
         return this.selectListByIds(new ArrayList<>(userIds));
     }
-
-    /**
-     * 通过部门ID查询用户
-     *
-     * @param deptIds 部门ids
-     * @return 用户
-     */
 
 
 

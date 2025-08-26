@@ -63,11 +63,6 @@ public class SysRoleVo implements Serializable {
     @ExcelProperty(value = "菜单树选择项是否关联显示")
     private Boolean menuCheckStrictly;
 
-    /**
-     * 部门树选择项是否关联显示
-     */
-    @ExcelProperty(value = "部门树选择项是否关联显示")
-    private Boolean deptCheckStrictly;
 
     /**
      * 角色状态（0正常 1停用）

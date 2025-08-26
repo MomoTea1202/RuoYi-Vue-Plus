@@ -17,18 +17,18 @@ import java.lang.annotation.*;
 public @interface DataColumn {
 
     /**
-     * 数据权限模板的占位符关键字，默认为 "deptName"
+     * 数据权限模板的占位符关键字，默认为 "userName"
      *
      * @return 占位符关键字数组
      */
-    String[] key() default "deptName";
+    String[] key() default "userName";
 
     /**
-     * 数据权限模板的占位符替换值，默认为 "dept_id"
+     * 数据权限模板的占位符替换值，默认为 "user_id"
      *
      * @return 占位符替换值数组
      */
-    String[] value() default "dept_id";
+    String[] value() default "user_id";
 
     /**
      * 权限标识符 用于通过菜单权限标识符来获取数据权限

@@ -15,12 +15,6 @@ import jakarta.validation.constraints.NotNull;
 @Data
 public class TestDemoImportVo {
 
-    /**
-     * 部门id
-     */
-    @NotNull(message = "部门id不能为空")
-    @ExcelProperty(value = "部门id")
-    private Long deptId;
 
     /**
      * 用户id

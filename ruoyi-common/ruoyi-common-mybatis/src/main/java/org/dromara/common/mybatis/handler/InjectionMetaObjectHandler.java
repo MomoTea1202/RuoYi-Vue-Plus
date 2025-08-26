@@ -49,12 +49,11 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
                         // 填充创建人、更新人和创建部门信息
                         baseEntity.setCreateBy(userId);
                         baseEntity.setUpdateBy(userId);
-                        baseEntity.setCreateDept(ObjectUtils.notNull(baseEntity.getCreateDept(), loginUser.getDeptId()));
+
                     } else {
                         // 填充创建人、更新人和创建部门信息
                         baseEntity.setCreateBy(DEFAULT_USER_ID);
                         baseEntity.setUpdateBy(DEFAULT_USER_ID);
-                        baseEntity.setCreateDept(ObjectUtils.notNull(baseEntity.getCreateDept(), DEFAULT_USER_ID));
                     }
                 }
             } else {

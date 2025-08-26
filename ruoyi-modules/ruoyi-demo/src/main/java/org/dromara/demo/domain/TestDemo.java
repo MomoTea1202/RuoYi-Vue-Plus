@@ -27,10 +27,6 @@ public class TestDemo extends TenantEntity {
     @TableId(value = "id")
     private Long id;
 
-    /**
-     * 部门id
-     */
-    private Long deptId;
 
     /**
      * 用户id

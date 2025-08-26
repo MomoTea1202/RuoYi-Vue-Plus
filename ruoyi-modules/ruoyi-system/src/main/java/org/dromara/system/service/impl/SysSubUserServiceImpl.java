@@ -29,14 +29,11 @@ import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.*;
 import org.dromara.system.domain.bo.NtfEmlBo;
 import org.dromara.system.domain.bo.SysUserBo;
-import org.dromara.system.domain.vo.SysPostVo;
 import org.dromara.system.domain.vo.SysRoleVo;
-import org.dromara.system.domain.vo.SysUserExportVo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.*;
 import org.dromara.system.service.GoogleTwoFAService;
 import org.dromara.system.service.ISysSubUserService;
-import org.dromara.system.service.ISysUserService;
 import org.dromara.system.service.NtfEmlTplSrv;
 import org.mybatis.logging.Logger;
 import org.mybatis.logging.LoggerFactory;
@@ -109,10 +106,6 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
 
     private String getFieldWithTableName(String fieldName) {
         String fieldTargetTableName = "u.";
-        if(StringUtil.equals(fieldName,"dept_name"))
-        {
-            fieldTargetTableName = "d.";
-        }
         return fieldTargetTableName + fieldName;
     }
 

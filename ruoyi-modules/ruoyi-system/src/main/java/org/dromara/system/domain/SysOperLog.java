@@ -62,10 +62,6 @@ public class SysOperLog implements Serializable {
      */
     private String operName;
 
-    /**
-     * 部门名称
-     */
-    private String deptName;
 
     /**
      * 请求url

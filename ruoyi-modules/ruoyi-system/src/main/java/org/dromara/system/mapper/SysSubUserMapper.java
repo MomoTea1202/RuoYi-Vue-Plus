@@ -29,7 +29,6 @@ public interface SysSubUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      * @return 分页的用户信息
      */
     @DataPermission({
-        @DataColumn(key = "deptName", value = "dept_id"),
         @DataColumn(key = "userName", value = "user_id")
     })
     Page<SysUserVo> selectPageSubUserList(@Param("page") Page<SysUserVo> page, @Param(Constants.WRAPPER) Wrapper<SysUser> queryWrapper);
@@ -42,7 +41,6 @@ public interface SysSubUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      * @return 用户信息集合
      */
     @DataPermission({
-        @DataColumn(key = "deptName", value = "dept_id"),
         @DataColumn(key = "userName", value = "user_id")
     })
     default List<SysUserVo> selectUserList(Wrapper<SysUser> queryWrapper) {
@@ -58,7 +56,6 @@ public interface SysSubUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      * @return 用户数量
      */
     @DataPermission({
-        @DataColumn(key = "deptName", value = "dept_id"),
         @DataColumn(key = "userName", value = "user_id")
     })
     default long countUserById(Long userId) {
@@ -74,7 +71,6 @@ public interface SysSubUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      */
     @Override
     @DataPermission({
-        @DataColumn(key = "deptName", value = "dept_id"),
         @DataColumn(key = "userName", value = "user_id")
     })
     int update(@Param(Constants.ENTITY) SysUser user, @Param(Constants.WRAPPER) Wrapper<SysUser> updateWrapper);
@@ -87,7 +83,6 @@ public interface SysSubUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      */
     @Override
     @DataPermission({
-        @DataColumn(key = "deptName", value = "dept_id"),
         @DataColumn(key = "userName", value = "user_id")
     })
     int updateById(@Param(Constants.ENTITY) SysUser user);

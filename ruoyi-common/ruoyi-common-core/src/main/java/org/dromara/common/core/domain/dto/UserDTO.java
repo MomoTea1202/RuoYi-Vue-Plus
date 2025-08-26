@@ -25,10 +25,6 @@ public class UserDTO implements Serializable {
      */
     private Long userId;
 
-    /**
-     * 部门ID
-     */
-    private Long deptId;
 
     /**
      * 用户账号

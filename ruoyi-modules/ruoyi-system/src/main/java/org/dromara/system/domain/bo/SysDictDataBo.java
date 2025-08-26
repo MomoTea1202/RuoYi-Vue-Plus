@@ -68,11 +68,6 @@ public class SysDictDataBo extends BaseEntity {
     private String isDefault;
 
     /**
-     * 创建部门
-     */
-    private Long createDept;
-
-    /**
      * 备注
      */
     private String remark;

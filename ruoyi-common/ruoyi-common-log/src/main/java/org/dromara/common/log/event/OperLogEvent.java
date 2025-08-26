@@ -64,11 +64,6 @@ public class OperLogEvent implements Serializable {
     private String operName;
 
     /**
-     * 部门名称
-     */
-    private String deptName;
-
-    /**
      * 请求url
      */
     private String operUrl;
