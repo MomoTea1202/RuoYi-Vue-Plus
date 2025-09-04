@@ -1,10 +1,10 @@
 package org.dromara.system.domain;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.dromara.common.tenant.core.TenantEntity;
 
 /**
  * 多语言翻译对象 sys_locale

@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
-import org.dromara.common.tenant.core.TenantEntity;
 
 /**
  * 字典数据表 sys_dict_data

@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
-import org.dromara.common.tenant.core.TenantEntity;
 
 import java.util.Date;
 
