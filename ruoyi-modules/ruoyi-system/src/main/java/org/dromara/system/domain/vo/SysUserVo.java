@@ -125,10 +125,16 @@ public class SysUserVo implements Serializable {
      */
     private Long roleId;
 
-    private String parentId;
-
-    private String parentName;
     private String googleSecret;
+
     private Boolean isSfa;
+
+    private Long uplineId;
+
+    private Long sbaId;
+
+    private Long cpyId;
+
+    private Boolean isSub;
 
 }

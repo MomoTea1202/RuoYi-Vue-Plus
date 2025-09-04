@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
+import org.dromara.common.mybatis.core.domain.BaseEntity;
 import org.dromara.common.tenant.core.TenantEntity;
 
 import java.util.Date;
@@ -19,7 +20,7 @@ import java.util.Date;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_user")
-public class SysUser extends TenantEntity {
+public class SysUser extends BaseEntity {
 
     /**
      * 用户ID
@@ -98,11 +99,17 @@ public class SysUser extends TenantEntity {
      */
     private String remark;
 
-    private String parentId;
+    private Long uplineId;
+
+    private Long sbaId;
+
+    private Long cpyId;
 
     private String googleSecret;
 
     private Boolean isSfa;
+
+    private Boolean isSub;
 
 
     public SysUser(Long userId) {

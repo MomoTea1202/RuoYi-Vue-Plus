@@ -132,4 +132,6 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
 
     @Update("UPDATE sys_user SET is_sfa = CASE WHEN is_sfa = 1 THEN 0 ELSE 1 END WHERE user_id = #{userId}")
     int update2fa(@Param("userId") Long userId);
+
+    SysUser selectUserByUserId (@Param("userId") Long userId);
 }

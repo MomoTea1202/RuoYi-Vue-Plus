@@ -30,10 +30,6 @@ public class LoginBody implements Serializable {
     @NotBlank(message = "{auth.grant.type.not.blank}")
     private String grantType;
 
-    /**
-     * 租户ID
-     */
-    private String tenantId;
 
     /**
      * 验证码

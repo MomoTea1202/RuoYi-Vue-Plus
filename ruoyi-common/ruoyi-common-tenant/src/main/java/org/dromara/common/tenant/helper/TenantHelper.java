@@ -199,7 +199,6 @@ public class TenantHelper {
             clearDynamic();
         }
     }
-
     /**
      * 在动态租户中执行
      *

@@ -49,7 +49,7 @@ public class LoginHelper {
     public static void login(LoginUser loginUser, SaLoginParameter model) {
         model = ObjectUtil.defaultIfNull(model, new SaLoginParameter());
         StpUtil.login(loginUser.getLoginId(),
-            model.setExtra(TENANT_KEY, loginUser.getTenantId())
+            model
                 .setExtra(USER_KEY, loginUser.getUserId())
                 .setExtra(USER_NAME_KEY, loginUser.getUsername())
                 .setExtra(GOOGLE_SECRET,loginUser.getGoogleSecret())

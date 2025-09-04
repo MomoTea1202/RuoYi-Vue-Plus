@@ -3,6 +3,7 @@ package org.dromara.system.domain;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import org.dromara.common.mybatis.core.domain.BaseEntity;
 import org.dromara.common.tenant.core.TenantEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_role")
-public class SysRole extends TenantEntity {
+public class SysRole extends BaseEntity {
 
     /**
      * 角色ID

@@ -72,19 +72,7 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
             .eq(SysConfig::getConfigKey, configKey));
         return ObjectUtils.notNullGetter(retConfig, SysConfig::getConfigValue, StringUtils.EMPTY);
     }
-
-    /**
-     * 获取注册开关
-     * @param tenantId 租户id
-     * @return true开启，false关闭
-     */
-    @Override
-    public boolean selectRegisterEnabled(String tenantId) {
-        String configValue = TenantHelper.dynamic(tenantId, () ->
-            this.selectConfigByKey("sys.account.registerUser")
-        );
-        return Convert.toBool(configValue);
-    }
+    
 
     /**
      * 查询参数配置列表

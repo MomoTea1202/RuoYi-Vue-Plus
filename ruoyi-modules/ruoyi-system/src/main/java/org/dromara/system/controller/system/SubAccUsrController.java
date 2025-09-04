@@ -46,7 +46,7 @@ public class SubAccUsrController extends BaseController {
 
     private final ISysSubUserService userService;
     private final ISysRoleService roleService;
-    private final ISysTenantService tenantService;
+
 
     /**
      * 获取用户列表
@@ -125,11 +125,7 @@ public class SubAccUsrController extends BaseController {
         } else if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user)) {
             return R.fail("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
-        if (TenantHelper.isEnable()) {
-            if (!tenantService.checkAccountBalance(TenantHelper.getTenantId())) {
-                return R.fail("当前租户下用户名额不足，请联系管理员");
-            }
-        }
+
         String normalPassword = user.getPassword();
         user.setPassword(BCrypt.hashpw(user.getPassword()));
         return toAjax(userService.insertUser(user,normalPassword));

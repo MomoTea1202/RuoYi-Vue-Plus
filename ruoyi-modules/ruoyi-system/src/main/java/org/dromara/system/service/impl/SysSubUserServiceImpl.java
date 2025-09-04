@@ -82,16 +82,16 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
         QueryWrapper<SysUser> wrapper = Wrappers.query();
         String loginUser=LoginHelper.getUserIdStr();
         wrapper.eq("u.del_flag", SystemConstants.NORMAL)
+            .eq("u.is_sub", true)
             .eq(params.containsKey("usrId") && StringUtils.isNotBlank((String) params.get("usrId")), "u.user_id", params.get("usrId"))
             .like(params.containsKey("userName") && StringUtils.isNotBlank((String) params.get("userName")), "u.user_name", params.get("userName"))
             .like(params.containsKey("nickName") && StringUtils.isNotBlank((String) params.get("nickName")), "u.nick_name", params.get("nickName"))
             .like(params.containsKey("status") && StringUtils.isNotBlank((String) params.get("status")), "u.status", params.get("status"))
             .like(params.containsKey("phonenumber") && StringUtils.isNotBlank((String) params.get("phonenumber")), "u.phonenumber", params.get("phonenumber"))
-            .between(params.get("beginTime") != null && params.get("endTime") != null, "u.create_time", params.get("beginTime"), params.get("endTime"));
-        if(!(LoginHelper.isSuperAdmin())){
-            wrapper.eq("u.parent_id",loginUser);
-        }else{
-            wrapper.isNotNull("u.parent_id");
+            .between(params.get("beginTime") != null && params.get("endTime") != null, "u.create_time", params.get("beginTime"), params.get("endTime"))
+            .eq("u.is_sub",true);
+        if(!(LoginHelper.isSuperAdmin())) {
+            wrapper.eq("u.create_by", loginUser);
         }
 
         if(StringUtils.isNotBlank(pageQuery.getOrderByColumn()))
@@ -255,8 +255,8 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insertUser(SysUserBo user,String nPassword) {
-        user.setParentId(LoginHelper.getUserIdStr());
-        Long[] roleIds= {5L};
+        user.setIsSub(true);
+        Long[] roleIds= {6L};
         user.setRoleIds(roleIds);
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
         // 新增用户信息
@@ -280,7 +280,6 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
         user.setCreateBy(0L);
         user.setUpdateBy(0L);
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
-        sysUser.setTenantId(tenantId);
         return baseMapper.insert(sysUser) > 0;
     }
 

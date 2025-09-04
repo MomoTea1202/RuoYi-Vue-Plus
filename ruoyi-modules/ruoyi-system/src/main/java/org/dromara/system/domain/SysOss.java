@@ -2,6 +2,7 @@ package org.dromara.system.domain;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import org.dromara.common.mybatis.core.domain.BaseEntity;
 import org.dromara.common.tenant.core.TenantEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +15,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_oss")
-public class SysOss extends TenantEntity {
+public class SysOss extends BaseEntity {
 
     /**
      * 对象存储主键

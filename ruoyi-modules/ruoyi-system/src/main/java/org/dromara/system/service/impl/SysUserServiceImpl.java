@@ -86,7 +86,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         QueryWrapper<SysUser> wrapper = Wrappers.query();
 
         wrapper.eq("u.del_flag", SystemConstants.NORMAL)
-            .isNull("u.parent_id")
+            .eq("u.is_sub", false)
             .eq(params.containsKey("usrId") && StringUtils.isNotBlank((String) params.get("usrId")), "u.user_id", params.get("usrId"))
             .like(params.containsKey("userName") && StringUtils.isNotBlank((String) params.get("userName")), "u.user_name", params.get("userName"))
             .like(params.containsKey("nickName") && StringUtils.isNotBlank((String) params.get("nickName")), "u.nick_name", params.get("nickName"))
@@ -351,8 +351,25 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insertUser(SysUserBo user,String nPassword) {
-        user.setParentId(null);
+        long loginUserId=LoginHelper.getUserId();
+        SysUser loginUser = baseMapper.selectUserByUserId(loginUserId);
+        SysRoleVo loginUserRole = roleMapper.selectRoleById(loginUserId);
+        long roleId = loginUserRole.getRoleId();
+        boolean isSa= LoginHelper.isSuperAdmin(loginUserId);
+        boolean isCpy = roleId==2;
+        user.setIsSub(false);
+        user.setUplineId(loginUserId);
+        user.setSbaId(loginUser.getSbaId());
+        if(!isSa){
+            if(isCpy){
+                user.setCpyId(loginUserId);
+            }else{
+                user.setCpyId(loginUser.getCpyId());
+            }
+        }
+
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
+
         // 新增用户信息
         int rows = baseMapper.insert(sysUser);
         user.setUserId(sysUser.getUserId());
@@ -374,7 +391,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         user.setCreateBy(0L);
         user.setUpdateBy(0L);
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
-        sysUser.setTenantId(tenantId);
         return baseMapper.insert(sysUser) > 0;
     }
 
