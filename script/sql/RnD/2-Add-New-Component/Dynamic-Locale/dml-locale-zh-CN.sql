@@ -782,6 +782,6 @@ INSERT INTO sys_locale (locale, code, value) VALUES
 ('zh-CN', 'icon.expand', '展开菜单'),
 ('zh-CN', 'icon.pin', '固定'),
 ('zh-CN', 'icon.unpin', '取消固定'),
-('zh-CN', 'datatable.itemCount', '共 {total} 条')
+('zh-CN', 'datatable.itemCount', '共 {total} 条'),
 ('zh-CN', 'route.userPerm', '用戶权限'),
 ('zh-CN', 'route.subAcc', '子账号');

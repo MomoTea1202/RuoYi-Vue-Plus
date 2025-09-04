@@ -27,7 +27,5 @@ ALTER TABLE sys_logininfor DROP COLUMN tenant_id;
 ALTER TABLE sys_dict_type DROP COLUMN tenant_id;
 ALTER TABLE sys_dict_data DROP COLUMN tenant_id;
 ALTER TABLE sys_config DROP COLUMN tenant_id;
-ALTER TABLE each_usr_perm DROP COLUMN tenant_id;
-
 -- REMOVE UNUSED COLUMN -- END --
 
