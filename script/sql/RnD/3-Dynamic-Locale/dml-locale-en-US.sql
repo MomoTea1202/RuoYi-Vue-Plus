@@ -782,5 +782,6 @@ INSERT INTO sys_locale (locale, code, value) VALUES
 ('en-US', 'icon.expand', 'Expand Menu'),
 ('en-US', 'icon.pin', 'Pin'),
 ('en-US', 'icon.unpin', 'Unpin'),
-('en-US', 'datatable.itemCount', 'Total {total} items');
-
+('en-US', 'datatable.itemCount', 'Total {total} items'),
+('en-US', 'route.userPerm', 'User Permission'),
+('en-US', 'route.subAcc', 'Sub Account');
