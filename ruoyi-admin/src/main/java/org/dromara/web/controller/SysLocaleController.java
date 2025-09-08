@@ -1,16 +1,10 @@
 package org.dromara.web.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.dromara.common.redis.utils.RedisUtils;
 import org.dromara.system.service.SysLocaleService;
-import org.redisson.api.RBucket;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Map;
 
 @RestController

@@ -1,8 +1,6 @@
 package org.dromara.system.service.impl;
 
 import jakarta.activation.DataSource;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mail.utils.MailUtils;
@@ -11,12 +9,9 @@ import org.dromara.system.domain.bo.NtfEmlBo;
 import org.dromara.system.mapper.NtfEmlTplMapper;
 import org.dromara.system.service.NtfEmlTplSrv;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Service

@@ -13,9 +13,10 @@ import me.zhyd.oauth.utils.AuthStateUtils;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.R;
 import org.dromara.common.core.domain.model.LoginBody;
-import org.dromara.common.core.domain.model.RegisterBody;
 import org.dromara.common.core.domain.model.SocialLoginBody;
-import org.dromara.common.core.utils.*;
+import org.dromara.common.core.utils.MessageUtils;
+import org.dromara.common.core.utils.StringUtils;
+import org.dromara.common.core.utils.ValidatorUtils;
 import org.dromara.common.encrypt.annotation.ApiEncrypt;
 import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.satoken.utils.LoginHelper;
@@ -28,12 +29,10 @@ import org.dromara.system.domain.vo.SysClientVo;
 import org.dromara.system.service.ISysClientService;
 import org.dromara.system.service.ISysConfigService;
 import org.dromara.system.service.ISysSocialService;
-
 import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.service.IAuthStrategy;
 import org.dromara.web.service.SysLoginService;
 import org.dromara.web.service.SysRegisterService;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;

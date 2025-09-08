@@ -6,10 +6,9 @@ import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import jakarta.activation.DataSource;
 import jakarta.mail.util.ByteArrayDataSource;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-
-import jakarta.activation.DataSource;
 import org.dromara.common.satoken.utils.LoginHelper;
 
 import java.io.ByteArrayInputStream;

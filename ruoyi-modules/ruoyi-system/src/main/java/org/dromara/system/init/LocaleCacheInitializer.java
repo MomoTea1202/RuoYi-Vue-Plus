@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.system.mapper.SysLocaleMapper;
 import org.dromara.system.service.SysLocaleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 
 @Slf4j
 @Component

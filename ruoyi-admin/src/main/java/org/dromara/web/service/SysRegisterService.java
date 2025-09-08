@@ -1,25 +1,17 @@
 package org.dromara.web.service;
 
-import cn.hutool.crypto.digest.BCrypt;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.Constants;
 import org.dromara.common.core.constant.GlobalConstants;
-import org.dromara.common.core.domain.model.RegisterBody;
-import org.dromara.common.core.enums.UserType;
 import org.dromara.common.core.exception.user.CaptchaException;
 import org.dromara.common.core.exception.user.CaptchaExpireException;
-import org.dromara.common.core.exception.user.UserException;
 import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.ServletUtils;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.log.event.LogininforEvent;
 import org.dromara.common.redis.utils.RedisUtils;
-
 import org.dromara.common.web.config.properties.CaptchaProperties;
-
-
 import org.dromara.system.mapper.SysUserMapper;
 import org.dromara.system.service.ISysUserService;
 import org.springframework.stereotype.Service;

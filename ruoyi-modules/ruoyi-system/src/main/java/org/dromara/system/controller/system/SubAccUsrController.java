@@ -1,12 +1,10 @@
 package org.dromara.system.controller.system;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.R;
@@ -21,17 +19,17 @@ import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.SearchCriteria;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
-import org.dromara.common.tenant.helper.TenantHelper;
 import org.dromara.common.web.core.BaseController;
-import org.dromara.system.domain.bo.*;
+import org.dromara.system.domain.bo.SysRoleBo;
+import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.*;
-import org.dromara.system.service.*;
+import org.dromara.system.service.ISysRoleService;
+import org.dromara.system.service.ISysSubUserService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 用户信息
@@ -75,10 +73,6 @@ public class SubAccUsrController extends BaseController {
     public R<UserInfoVo> getInfo() {
         UserInfoVo userInfoVo = new UserInfoVo();
         LoginUser loginUser = LoginHelper.getLoginUser();
-        if (TenantHelper.isEnable() && LoginHelper.isSuperAdmin()) {
-            // 超级管理员 如果重新加载用户信息需清除动态租户
-            TenantHelper.clearDynamic();
-        }
         SysUserVo user = userService.selectUserById(loginUser.getUserId());
         if (ObjectUtil.isNull(user)) {
             return R.fail("没有权限访问用户数据!");

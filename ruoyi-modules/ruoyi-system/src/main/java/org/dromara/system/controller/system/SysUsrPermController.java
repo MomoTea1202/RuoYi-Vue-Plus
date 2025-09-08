@@ -6,16 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.web.core.BaseController;
-import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.bo.SysUsrPermBo;
-import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.domain.vo.SysUsrPermVo;
 import org.dromara.system.service.ISysUsrPermService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController

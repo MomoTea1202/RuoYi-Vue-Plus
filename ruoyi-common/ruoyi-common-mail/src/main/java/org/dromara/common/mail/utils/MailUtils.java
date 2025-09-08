@@ -8,6 +8,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.mail.JakartaMail;
 import cn.hutool.extra.mail.JakartaUserPassAuthenticator;
 import cn.hutool.extra.mail.MailAccount;
+import jakarta.activation.DataSource;
 import jakarta.mail.Authenticator;
 import jakarta.mail.Session;
 import lombok.AccessLevel;
@@ -16,11 +17,9 @@ import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import jakarta.activation.DataSource;
-
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
