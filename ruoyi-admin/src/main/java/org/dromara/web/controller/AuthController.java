@@ -27,12 +27,10 @@ import org.dromara.common.sse.dto.SseMessageDto;
 import org.dromara.common.sse.utils.SseMessageUtils;
 import org.dromara.system.domain.vo.SysClientVo;
 import org.dromara.system.service.ISysClientService;
-import org.dromara.system.service.ISysConfigService;
 import org.dromara.system.service.ISysSocialService;
 import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.service.IAuthStrategy;
 import org.dromara.web.service.SysLoginService;
-import org.dromara.web.service.SysRegisterService;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
@@ -56,8 +54,6 @@ public class AuthController {
 
     private final SocialProperties socialProperties;
     private final SysLoginService loginService;
-    private final SysRegisterService registerService;
-    private final ISysConfigService configService;
 
     private final ISysSocialService socialUserService;
     private final ISysClientService clientService;
@@ -108,15 +104,13 @@ public class AuthController {
      * @return 结果
      */
     @GetMapping("/binding/{source}")
-    public R<String> authBinding(@PathVariable("source") String source,
-                                 @RequestParam String tenantId, @RequestParam String domain) {
+    public R<String> authBinding(@PathVariable("source") String source, @RequestParam String domain) {
         SocialLoginConfigProperties obj = socialProperties.getType().get(source);
         if (ObjectUtil.isNull(obj)) {
             return R.fail(source + "平台账号暂不支持");
         }
         AuthRequest authRequest = SocialUtils.getAuthRequest(source, socialProperties);
         Map<String, String> map = new HashMap<>();
-        map.put("tenantId", tenantId);
         map.put("domain", domain);
         map.put("state", AuthStateUtils.createState());
         String authorizeUrl = authRequest.authorize(Base64.encode(JsonUtils.toJsonString(map), StandardCharsets.UTF_8));
