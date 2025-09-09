@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 角色 业务层处理
@@ -173,9 +174,29 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      */
     @Override
     public List<SysRoleVo> selectRoleByIds(List<Long> roleIds) {
-        return baseMapper.selectRoleList(new QueryWrapper<SysRole>()
-            .eq("r.status", SystemConstants.NORMAL)
-            .in(CollUtil.isNotEmpty(roleIds), "r.role_id", roleIds));
+        QueryWrapper<SysRole> qw = new QueryWrapper<SysRole>()
+            .eq("r.status", SystemConstants.NORMAL);
+        if(CollUtil.isNotEmpty(roleIds)){
+            qw.in(CollUtil.isNotEmpty(roleIds), "r.role_id", roleIds);
+        }
+        List<SysRoleVo> roleList=baseMapper.selectRoleList(qw);
+
+
+        Long userId = LoginHelper.getUserId();
+        SysRole role = baseMapper.selectById(userId);
+        Long roleId = role.getRoleId();
+        if (roleId == 1){
+            roleList = roleList.stream()
+                .filter(r-> r.getRoleId() == 2|| r.getRoleId() == 3|| r.getRoleId() == 4)
+                .collect(Collectors.toList());
+        }else if(roleId == 2){
+            roleList = roleList.stream()
+                .filter(r-> r.getRoleId() == 3|| r.getRoleId() == 4)
+                .collect(Collectors.toList());
+        }else {
+            roleList=Collections.emptyList();
+        }
+        return roleList;
     }
 
     /**

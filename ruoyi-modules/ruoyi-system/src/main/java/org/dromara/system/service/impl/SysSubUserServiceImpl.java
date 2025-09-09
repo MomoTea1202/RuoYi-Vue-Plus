@@ -257,7 +257,7 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
     @Transactional(rollbackFor = Exception.class)
     public int insertUser(SysUserBo user,String nPassword) {
         user.setIsSub(true);
-        Long[] roleIds= {6L};
+        Long roleIds= 999L;
         user.setRoleIds(roleIds);
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
         // 新增用户信息
@@ -334,7 +334,7 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void insertUserAuth(Long userId, Long[] roleIds) {
+    public void insertUserAuth(Long userId, Long roleIds) {
         insertUserRole(userId, roleIds, true);
     }
 
@@ -418,7 +418,7 @@ public class SysSubUserServiceImpl implements ISysSubUserService, UserService {
      * @param roleIds 角色组
      * @param clear   清除已存在的关联数据
      */
-    private void insertUserRole(Long userId, Long[] roleIds, boolean clear) {
+    private void insertUserRole(Long userId, Long roleIds, boolean clear) {
         if (ArrayUtil.isNotEmpty(roleIds)) {
             List<Long> roleList = new ArrayList<>(List.of(roleIds));
             if (!LoginHelper.isSuperAdmin(userId)) {

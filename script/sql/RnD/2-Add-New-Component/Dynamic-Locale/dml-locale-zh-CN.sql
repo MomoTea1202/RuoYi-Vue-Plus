@@ -785,3 +785,9 @@ INSERT INTO sys_locale (locale, code, value) VALUES
 ('zh-CN', 'datatable.itemCount', '共 {total} 条'),
 ('zh-CN', 'route.userPerm', '用戶权限'),
 ('zh-CN', 'route.subAcc', '子账号');
+
+--NEW LOCALE START --
+INSERT INTO sys_locale (locale, code, value) VALUES
+('zh-CN', 'page.system.user.company', '公司'),
+('zh-CN', 'page.system.user.form.company.required', '请输入公司')
+-- NEW LOCALE END --

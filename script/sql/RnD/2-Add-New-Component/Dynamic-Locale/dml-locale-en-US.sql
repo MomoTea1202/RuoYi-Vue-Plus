@@ -785,3 +785,10 @@ INSERT INTO sys_locale (locale, code, value) VALUES
 ('en-US', 'datatable.itemCount', 'Total {total} items'),
 ('en-US', 'route.userPerm', 'User Permission'),
 ('en-US', 'route.subAcc', 'Sub Account');
+
+--NEW LOCALE START --
+INSERT INTO sys_locale (locale, code, value) VALUES
+('en-US', 'page.system.user.company', 'Company'),
+('en-US', 'page.system.user.form.company.required', 'Please enter company')
+-- NEW LOCALE END --
+
