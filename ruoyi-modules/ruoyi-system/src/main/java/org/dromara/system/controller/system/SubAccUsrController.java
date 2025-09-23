@@ -79,7 +79,7 @@ public class SubAccUsrController extends BaseController {
         }
         userInfoVo.setUser(user);
         userInfoVo.setPermissions(loginUser.getMenuPermission());
-        userInfoVo.setRoles(loginUser.getRolePermission());
+        userInfoVo.setRoles(loginUser.getRoleId().toString());
         return R.ok(userInfoVo);
     }
 
@@ -223,7 +223,7 @@ public class SubAccUsrController extends BaseController {
     @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.GRANT)
     @PutMapping("/authRole")
-    public R<Void> insertAuthRole(Long userId, Long[] roleIds) {
+    public R<Void> insertAuthRole(Long userId, Long roleIds) {
         userService.checkUserDataScope(userId);
         userService.insertUserAuth(userId, roleIds);
         return R.ok();

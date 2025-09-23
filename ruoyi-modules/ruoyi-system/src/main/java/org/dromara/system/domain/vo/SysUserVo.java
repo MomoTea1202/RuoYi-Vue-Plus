@@ -112,7 +112,7 @@ public class SysUserVo implements Serializable {
     /**
      * 角色组
      */
-    private Long[] roleIds;
+    private Long roleIds;
 
 
     /**

@@ -122,6 +122,9 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
     int updateById(@Param(Constants.ENTITY) SysUser user);
     String selectUsernameByUserId (@Param("userId") Long userId);
 
+
+    List<SysUserVo> selectCompanyList();
+
     @Update("UPDATE sys_user SET google_secret = #{secret} WHERE user_id = #{userId}")
     void updateGoogleSecret(@Param("userId") Long userId, @Param("secret") String secret);
 
@@ -132,5 +135,5 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
     @Update("UPDATE sys_user SET is_sfa = CASE WHEN is_sfa = 1 THEN 0 ELSE 1 END WHERE user_id = #{userId}")
     int update2fa(@Param("userId") Long userId);
 
-    SysUser selectUserByUserId (@Param("userId") Long userId);
+    SysUserVo selectUserByUserId (@Param("userId") Long userId);
 }

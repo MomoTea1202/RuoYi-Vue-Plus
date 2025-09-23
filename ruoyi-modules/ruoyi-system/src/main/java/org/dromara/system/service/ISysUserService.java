@@ -87,6 +87,14 @@ public interface ISysUserService {
     List<SysUserVo> selectUserByIds(List<Long> userIds);
 
     /**
+     * 通过用户ID串查询用户
+     *
+     * @param userIds 用户ID串
+     * @return 用户列表信息
+     */
+    List<SysUserVo> getCompanyList();
+
+    /**
      * 根据用户ID查询用户所属角色组
      *
      * @param userId 用户ID
@@ -140,13 +148,7 @@ public interface ISysUserService {
      */
     int insertUser(SysUserBo user,String nPassword);
 
-    /**
-     * 注册用户信息
-     *
-     * @param user 用户信息
-     * @return 结果
-     */
-    boolean registerUser(SysUserBo user);
+
 
     /**
      * 修改用户信息
@@ -162,7 +164,7 @@ public interface ISysUserService {
      * @param userId  用户ID
      * @param roleIds 角色组
      */
-    void insertUserAuth(Long userId, Long[] roleIds);
+    void insertUserAuth(Long userId, Long roleIds);
 
     /**
      * 修改用户状态

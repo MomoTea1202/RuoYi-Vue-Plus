@@ -20,7 +20,7 @@ public class LoginUser implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    
+
 
     /**
      * 用户ID

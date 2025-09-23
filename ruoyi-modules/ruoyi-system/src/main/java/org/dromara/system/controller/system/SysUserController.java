@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.R;
+import org.dromara.common.core.domain.dto.RoleDTO;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -107,9 +108,13 @@ public class SysUserController extends BaseController {
         if (ObjectUtil.isNull(user)) {
             return R.fail("没有权限访问用户数据!");
         }
+        Long roleId= 0L;
+        for (RoleDTO role : loginUser.getRoles()) {
+             roleId = role.getRoleId();
+        }
         userInfoVo.setUser(user);
         userInfoVo.setPermissions(loginUser.getMenuPermission());
-        userInfoVo.setRoles(loginUser.getRolePermission());
+        userInfoVo.setRoles(roleId.toString());
         return R.ok(userInfoVo);
     }
 
@@ -226,6 +231,11 @@ public class SysUserController extends BaseController {
         userService.checkUserDataScope(user.getUserId());
         return toAjax(userService.updateUserStatus(user.getUserId(), user.getStatus()));
     }
+    @GetMapping("/cpyoptionselect")
+    public R<List<SysUserVo>>  getCompamyOption() {
+
+        return  R.ok(userService.getCompanyList());
+    }
 
     /**
      * 根据用户编号获取授权角色
@@ -253,7 +263,7 @@ public class SysUserController extends BaseController {
     @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.GRANT)
     @PutMapping("/authRole")
-    public R<Void> insertAuthRole(Long userId, Long[] roleIds) {
+    public R<Void> insertAuthRole(Long userId, Long roleIds) {
         userService.checkUserDataScope(userId);
         userService.insertUserAuth(userId, roleIds);
         return R.ok();

@@ -259,6 +259,12 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             .in(CollUtil.isNotEmpty(userIds), SysUser::getUserId, userIds));
     }
 
+    @Override
+    public List<SysUserVo> getCompanyList() {
+        return baseMapper.selectCompanyList();
+
+    }
+
     /**
      * 查询用户所属角色组
      *
@@ -354,20 +360,18 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     @Transactional(rollbackFor = Exception.class)
     public int insertUser(SysUserBo user,String nPassword) {
         long loginUserId=LoginHelper.getUserId();
-        SysUser loginUser = baseMapper.selectUserByUserId(loginUserId);
-        SysRoleVo loginUserRole = roleMapper.selectRoleById(loginUserId);
-        long roleId = loginUserRole.getRoleId();
         boolean isSa= LoginHelper.isSuperAdmin(loginUserId);
-        boolean isCpy = roleId==2;
+        boolean isCrtCpy = user.getRoleIds() ==2;
         user.setIsSub(false);
-        user.setUplineId(loginUserId);
-        user.setSbaId(loginUser.getSbaId());
-        if(!isSa){
-            if(isCpy){
-                user.setCpyId(loginUserId);
-            }else{
-                user.setCpyId(loginUser.getCpyId());
+        if (isSa){
+            if(isCrtCpy){
+                user.setUplineId(loginUserId);
+            }else {
+                user.setUplineId(user.getCpyId());
             }
+        }else {
+            user.setUplineId(loginUserId);
+            user.setCpyId(loginUserId);
         }
 
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
@@ -380,20 +384,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         insertUserPermission(user,false);
         sendEmail(user,nPassword);
         return rows;
-    }
-
-    /**
-     * 注册用户信息
-     *
-     * @param user 用户信息
-     * @return 结果
-     */
-    @Override
-    public boolean registerUser(SysUserBo user) {
-        user.setCreateBy(0L);
-        user.setUpdateBy(0L);
-        SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
-        return baseMapper.insert(sysUser) > 0;
     }
 
     /**
@@ -426,7 +416,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void insertUserAuth(Long userId, Long[] roleIds) {
+    public void insertUserAuth(Long userId, Long roleIds) {
         insertUserRole(userId, roleIds, true);
     }
 
@@ -504,36 +494,22 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     }
 
     private void insertUserPermission (SysUserBo user, boolean clear){
-        Long[] role = user.getRoleIds();
+        Long role = user.getRoleIds();
         if (ArrayUtil.isNotEmpty(role)) {
             if (clear) {
                 // 删除用户与岗位关联
                 usrPermMapper.delete(new LambdaQueryWrapper<EachUserPerm>().eq(EachUserPerm::getUsername, user.getUserName()));
             }
             // 新增用户与岗位管理
-            List<String> permList =  Arrays.stream(role)
-                .map(menuMapper::selectMenuPermsByRoleId)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .distinct()
-                .collect(Collectors.toList());
+            List<String> permList = menuMapper.selectMenuPermsByRoleId(role);
             String perm = String.join(",",permList);
-            List<Long> menuId = Arrays.stream(role)
-                .filter(Objects::nonNull)
-                .flatMap(roleId -> menuMapper
-                    .selectMenuListByRoleId(roleId, false)
-                    .stream()
-                )
-                .distinct()
-                .collect(Collectors.toList());
+            List<Long> menuId = menuMapper.selectMenuListByRoleId(role, false);
             String menuIds = StringUtils.join(menuId, ",");
                 EachUserPerm up = new EachUserPerm();
                 up.setUsername(user.getUserName());
                 up.setMenuId(menuIds);
                 up.setPermList(perm);
             usrPermMapper.insert(up);
-
-
     }}
     /**
      * 新增用户角色信息
@@ -542,7 +518,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param roleIds 角色组
      * @param clear   清除已存在的关联数据
      */
-    private void insertUserRole(Long userId, Long[] roleIds, boolean clear) {
+    private void insertUserRole(Long userId, Long roleIds, boolean clear) {
         if (ArrayUtil.isNotEmpty(roleIds)) {
             List<Long> roleList = new ArrayList<>(List.of(roleIds));
             if (!LoginHelper.isSuperAdmin(userId)) {
