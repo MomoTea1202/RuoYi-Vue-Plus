@@ -136,4 +136,6 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
     int update2fa(@Param("userId") Long userId);
 
     SysUserVo selectUserByUserId (@Param("userId") Long userId);
+
+    SysUserVo selectMainUserByUserId (@Param("userId") Long userId);
 }

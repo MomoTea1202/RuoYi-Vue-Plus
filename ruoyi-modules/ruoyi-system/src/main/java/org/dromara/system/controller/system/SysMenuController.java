@@ -90,11 +90,11 @@ public class SysMenuController extends BaseController {
      * @param roleId 角色ID
      */
     @SaCheckPermission("system:menu:query")
-    @GetMapping(value = "/roleMenuTreeselect/{roleId}")
-    public R<MenuTreeSelectVo> roleMenuTreeselect(@PathVariable("roleId") Long roleId) {
+    @GetMapping(value = "/roleMenuTreeselect/{roleKey}")
+    public R<MenuTreeSelectVo> roleMenuTreeselect(@PathVariable("roleKey") String roleKey) {
         List<SysMenuVo> menus = menuService.selectMenuList(LoginHelper.getUserId());
         MenuTreeSelectVo selectVo = new MenuTreeSelectVo(
-            menuService.selectMenuListByRoleId(roleId),
+            menuService.selectMenuListByRoleKey(roleKey),
             menuService.buildMenuTreeSelect(menus));
         return R.ok(selectVo);
     }

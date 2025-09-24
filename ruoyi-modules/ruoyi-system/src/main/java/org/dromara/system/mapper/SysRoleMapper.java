@@ -42,16 +42,11 @@ public interface SysRoleMapper extends BaseMapperPlus<SysRole, SysRoleVo> {
     })
     List<SysRoleVo> selectRoleList(@Param(Constants.WRAPPER) Wrapper<SysRole> queryWrapper);
 
-    /**
-     * 根据角色ID查询角色信息
-     *
-     * @param roleId 角色ID
-     * @return 对应的角色信息
-     */
+
     @DataPermission({
         @DataColumn(key = "userName", value = "r.create_by")
     })
-    SysRoleVo selectRoleById(Long roleId);
+    SysRoleVo selectRoleById(String roleKey);
 
     /**
      * 根据用户ID查询角色
@@ -67,6 +62,9 @@ public interface SysRoleMapper extends BaseMapperPlus<SysRole, SysRoleVo> {
      * @param userId 用户ID
      * @return 角色列表
      */
-    List<SysRoleVo> selectRolesByUserId(Long userId);
+    SysRoleVo selectRolesByUserId(Long userId);
+
+    SysRoleVo selectRoleByRoleKey(String roleKey);
+
 
 }

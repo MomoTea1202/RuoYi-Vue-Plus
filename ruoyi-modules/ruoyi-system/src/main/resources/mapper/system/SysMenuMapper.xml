@@ -12,7 +12,7 @@
         m.perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time
         from sys_menu m
             left join sys_role_menu rm on m.menu_id = rm.menu_id
-            left join sys_role r on rm.role_id = r.role_id
+            left join sys_role r on rm.role_key = r.role_key
         ${ew.getCustomSqlSegment}
     </select>
 
@@ -34,21 +34,17 @@
                         m.create_time
         from sys_menu m
                  left join sys_role_menu rm on m.menu_id = rm.menu_id and m.status = '0'
-                 left join sys_role r on rm.role_id = r.role_id and r.status = '0'
+                 left join sys_role r on rm.role_key = r.role_key and r.status = 'A'
         where m.menu_type in ('M', 'C')
-          and r.role_id in (select role_id from sys_user_role where user_id = #{userId})
+          and r.role_key in (select role_key from sys_user_role where user_id = #{userId})
         order by m.parent_id, m.order_num
     </select>
 
-    <select id="selectMenuListByRoleId" resultType="Long">
+    <select id="selectMenuListByRoleKey" resultType="Long">
         select m.menu_id
         from sys_menu m
         left join sys_role_menu rm on m.menu_id = rm.menu_id
-        where rm.role_id = #{roleId}
-        <if test="menuCheckStrictly">
-            and m.menu_id not in (select m.parent_id from sys_menu m inner join sys_role_menu rm on m.menu_id =
-            rm.menu_id and rm.role_id = #{roleId})
-        </if>
+        where rm.role_key = #{roleKey}
         order by m.parent_id, m.order_num
     </select>
 
@@ -56,8 +52,8 @@
         select distinct m.perms
         from sys_menu m
                  left join sys_role_menu rm on m.menu_id = rm.menu_id and m.status = '0'
-                 left join sys_role r on r.role_id = rm.role_id and r.status = '0'
-        where r.role_id in (select role_id from sys_user_role where user_id = #{userId})
+                 left join sys_role r on r.role_key = rm.role_key and r.status = 'A'
+        where r.role_key in (select role_key from sys_user_role where user_id = #{userId})
     </select>
 
     <select id="selectMenuPermsByMenuId" parameterType="String" resultType="String">
@@ -78,11 +74,11 @@
         where username = #{username}
     </select>
 
-    <select id="selectMenuPermsByRoleId" parameterType="Long" resultType="String">
+    <select id="selectMenuPermsByRoleKey" parameterType="String" resultType="String">
         select distinct m.perms
         from sys_menu m
                  left join sys_role_menu rm on m.menu_id = rm.menu_id
-        where m.status = '0' and rm.role_id = #{roleId}
+        where m.status = '0' and rm.role_key = #{roleKey}
     </select>
 
 </mapper>

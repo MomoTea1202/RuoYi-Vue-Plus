@@ -4,6 +4,7 @@ import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import org.dromara.common.core.constant.RoleConstants;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.excel.annotation.ExcelDictFormat;
 import org.dromara.common.excel.convert.ExcelDictConvert;
@@ -27,41 +28,23 @@ public class SysRoleVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 角色ID
+     * 角色权限字符串
      */
-    @ExcelProperty(value = "角色序号")
-    private Long roleId;
-
+    @ExcelProperty(value = "角色权限")
+    private String roleKey;
     /**
      * 角色名称
      */
     @ExcelProperty(value = "角色名称")
     private String roleName;
 
-    /**
-     * 角色权限字符串
-     */
-    @ExcelProperty(value = "角色权限")
-    private String roleKey;
+
 
     /**
      * 显示顺序
      */
     @ExcelProperty(value = "角色排序")
     private Integer roleSort;
-
-    /**
-     * 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限 5：仅本人数据权限 6：部门及以下或本人数据权限）
-     */
-    @ExcelProperty(value = "数据范围", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "1=全部数据权限,2=自定义数据权限,3=本部门数据权限,4=本部门及以下数据权限,5=仅本人数据权限,6=部门及以下或本人数据权限")
-    private String dataScope;
-
-    /**
-     * 菜单树选择项是否关联显示
-     */
-    @ExcelProperty(value = "菜单树选择项是否关联显示")
-    private Boolean menuCheckStrictly;
 
 
     /**
@@ -70,12 +53,6 @@ public class SysRoleVo implements Serializable {
     @ExcelProperty(value = "角色状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_normal_disable")
     private String status;
-
-    /**
-     * 备注
-     */
-    @ExcelProperty(value = "备注")
-    private String remark;
 
     /**
      * 创建时间
@@ -89,7 +66,7 @@ public class SysRoleVo implements Serializable {
     private boolean flag = false;
 
     public boolean isSuperAdmin() {
-        return SystemConstants.SUPER_ADMIN_ID.equals(this.roleId);
+        return RoleConstants.SUPER_ADMIN_ROLE_KEY.equals(this.roleKey);
     }
 
 }

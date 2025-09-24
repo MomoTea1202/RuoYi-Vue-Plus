@@ -45,3 +45,38 @@ ENGINE=InnoDB
 ;
 
 -- ADD NEW TABLE -- END --
+
+--CHANGE ROLE TABLE STRUCTURE START--
+DROP TABLE IF EXISTS `sys_role`;
+
+CREATE TABLE IF NOT EXISTS `sys_role` (
+  `role_key` VARCHAR(20) NOT NULL ,
+  `role_name` varchar(30) NOT NULL ,
+  `role_sort` int NOT NULL ,
+  `status` char(1) NOT NULL COMMENT '（0 active 1 disable）',
+  `create_by` bigint DEFAULT NULL ,
+  `create_time` datetime DEFAULT NULL ,
+  `update_by` bigint DEFAULT NULL ,
+  `update_time` datetime DEFAULT NULL ,
+  PRIMARY KEY (`role_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Role Table';
+
+DROP TABLE IF EXISTS `sys_role_menu`;
+
+CREATE TABLE IF NOT EXISTS `sys_role_menu` (
+ `role_key` VARCHAR(20) NOT NULL ,
+  `menu_id` bigint NOT NULL ,
+  PRIMARY KEY (`role_key`,`menu_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色和菜单关联表';
+
+DROP TABLE IF EXISTS `sys_user_role`;
+
+CREATE TABLE IF NOT EXISTS `sys_user_role` (
+ `menu_id` bigint NOT NULL ,
+ `role_key` VARCHAR(20) NOT NULL ,
+
+  PRIMARY KEY (`user_id`,`role_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户和角色关联表';
+--CHANGE ROLE TABLE STRUCTURE END--
+
+

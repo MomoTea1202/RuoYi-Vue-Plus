@@ -24,7 +24,7 @@ import org.dromara.common.core.enums.UserType;
  *
  * @author Lion Li
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+
 public class LoginHelper {
 
     public static final String LOGIN_USER_KEY = "loginUser";

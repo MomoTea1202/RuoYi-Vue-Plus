@@ -74,7 +74,7 @@ public class LoginUser implements Serializable {
     /**
      * 角色权限
      */
-    private Set<String> rolePermission;
+    private String rolePermission;
 
     /**
      * 用户名
@@ -89,12 +89,12 @@ public class LoginUser implements Serializable {
     /**
      * 角色对象
      */
-    private List<RoleDTO> roles;
+    private RoleDTO roles;
 
     /**
      * 数据权限 当前角色ID
      */
-    private Long roleId;
+    private String roleKey;
 
     /**
      * 客户端

@@ -31,15 +31,9 @@ public class SysPermissionServiceImpl implements ISysPermissionService, Permissi
      * @return 角色权限信息
      */
     @Override
-    public Set<String> getRolePermission(Long userId) {
-        Set<String> roles = new HashSet<>();
-        // 管理员拥有所有权限
-        if (LoginHelper.isSuperAdmin(userId)) {
-            roles.add(RoleConstants.SUPER_ADMIN_ROLE_KEY);
-        } else {
-            roles.addAll(roleService.selectRolePermissionByUserId(userId));
-        }
-        return roles;
+    public String getRolePermission(Long userId) {
+
+        return roleService.selectRolePermissionByUserId(userId);
     }
 
     /**

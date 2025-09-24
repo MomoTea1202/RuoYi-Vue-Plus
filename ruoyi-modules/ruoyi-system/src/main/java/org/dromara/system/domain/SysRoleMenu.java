@@ -19,7 +19,7 @@ public class SysRoleMenu {
      * 角色ID
      */
     @TableId(type = IdType.INPUT)
-    private Long roleId;
+    private String roleKey;
 
     /**
      * 菜单ID

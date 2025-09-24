@@ -7,10 +7,13 @@ INSERT INTO `ntf_eml_tpl` (`eml_tpl_code`, `eml_html_body_spt`, `eml_sbj`, `sts_
 
 -- ADD NEW DATA -- END --
 
--- ADD ROLE MENU -- START --
-INSERT INTO `sys_role` (`role_id`, `role_name`, `role_key`, `role_sort`, `data_scope`, `menu_check_strictly`, `dept_check_strictly`, `status`, `del_flag`, `create_dept`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2, 'company', 'company', 1, '1', 1, 1, '0', '0', NULL, 1, '2025-08-26 16:44:45', 1, '2025-09-04 15:14:13', '');
-INSERT INTO `sys_role` (`role_id`, `role_name`, `role_key`, `role_sort`, `data_scope`, `menu_check_strictly`, `dept_check_strictly`, `status`, `del_flag`, `create_dept`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (3, 'merchant', 'merchant', 2, '1', 1, 1, '0', '0', NULL, 1, '2025-08-19 09:43:21', 1, '2025-08-26 16:45:11', '');
-INSERT INTO `sys_role` (`role_id`, `role_name`, `role_key`, `role_sort`, `data_scope`, `menu_check_strictly`, `dept_check_strictly`, `status`, `del_flag`, `create_dept`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (4, 'leader', 'leader', 2, '1', 1, 1, '0', '0', NULL, 1, '2025-08-19 09:43:09', 1, '2025-09-04 16:37:17', '');
-INSERT INTO `sys_role` (`role_id`, `role_name`, `role_key`, `role_sort`, `data_scope`, `menu_check_strictly`, `dept_check_strictly`, `status`, `del_flag`, `create_dept`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (999, 'subAcc', 'subAcc', 6, '1', 1, 1, '0', '0', 103, 1, '2025-07-17 09:28:38', 1, '2025-08-26 16:44:58', '');
--- ADD ROLE MENU -- END --
+--CHANGE ROLE TABLE STRUCTURE START--
+INSERT INTO `sys_role` (`role_key`, `role_name`, `role_sort`, `status`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES
+	('SA', '超级管理员', 1, '0', 1, '2025-07-02 14:14:03', NULL, NULL),
+	('CPY', 'company', 2, '0', 1, '2025-08-26 16:44:45', 1, '2025-09-08 17:38:22'),
+	('MER', 'merchant', 3, '0', 1, '2025-08-19 09:43:21', 1, '2025-08-26 16:45:11'),
+	('LDR', 'leader', 3, '0', 1, '2025-08-19 09:43:09', 1, '2025-09-04 16:37:17');
+
+
+--CHANGE ROLE TABLE STRUCTURE END--
 

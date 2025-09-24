@@ -86,12 +86,7 @@ public interface ISysUserService {
      */
     List<SysUserVo> selectUserByIds(List<Long> userIds);
 
-    /**
-     * 通过用户ID串查询用户
-     *
-     * @param userIds 用户ID串
-     * @return 用户列表信息
-     */
+
     List<SysUserVo> getCompanyList();
 
     /**
@@ -162,9 +157,9 @@ public interface ISysUserService {
      * 用户授权角色
      *
      * @param userId  用户ID
-     * @param roleIds 角色组
+     * @param roleKey 角色组
      */
-    void insertUserAuth(Long userId, Long roleIds);
+    void insertUserAuth(Long userId, String roleKey);
 
     /**
      * 修改用户状态

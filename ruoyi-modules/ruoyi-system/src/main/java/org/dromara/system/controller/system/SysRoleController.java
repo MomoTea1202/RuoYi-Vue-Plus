@@ -56,16 +56,12 @@ public class SysRoleController extends BaseController {
         ExcelUtil.exportExcel(list, "角色数据", SysRoleVo.class, response);
     }
 
-    /**
-     * 根据角色编号获取详细信息
-     *
-     * @param roleId 角色ID
-     */
+
     @SaCheckPermission("system:role:query")
-    @GetMapping(value = "/{roleId}")
-    public R<SysRoleVo> getInfo(@PathVariable Long roleId) {
-        roleService.checkRoleDataScope(roleId);
-        return R.ok(roleService.selectRoleById(roleId));
+    @GetMapping(value = "/{roleKey}")
+    public R<SysRoleVo> getInfo(@PathVariable String roleKey) {
+
+        return R.ok(roleService.selectRoleByKey(roleKey));
     }
 
     /**
@@ -93,7 +89,6 @@ public class SysRoleController extends BaseController {
     @PutMapping
     public R<Void> edit(@Validated @RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
-        roleService.checkRoleDataScope(role.getRoleId());
         if (!roleService.checkRoleNameUnique(role)) {
             return R.fail("修改角色'" + role.getRoleName() + "'失败，角色名称已存在");
         } else if (!roleService.checkRoleKeyUnique(role)) {
@@ -101,23 +96,12 @@ public class SysRoleController extends BaseController {
         }
 
         if (roleService.updateRole(role) > 0) {
-            roleService.cleanOnlineUserByRole(role.getRoleId());
+            roleService.cleanOnlineUserByRole(role.getRoleKey());
             return R.ok();
         }
         return R.fail("修改角色'" + role.getRoleName() + "'失败，请联系管理员");
     }
 
-    /**
-     * 修改保存数据权限
-     */
-    @SaCheckPermission("system:role:edit")
-    @Log(title = "角色管理", businessType = BusinessType.UPDATE)
-    @PutMapping("/dataScope")
-    public R<Void> dataScope(@RequestBody SysRoleBo role) {
-        roleService.checkRoleAllowed(role);
-        roleService.checkRoleDataScope(role.getRoleId());
-        return toAjax(roleService.authDataScope(role));
-    }
 
     /**
      * 状态修改
@@ -127,31 +111,20 @@ public class SysRoleController extends BaseController {
     @PutMapping("/changeStatus")
     public R<Void> changeStatus(@RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
-        roleService.checkRoleDataScope(role.getRoleId());
-        return toAjax(roleService.updateRoleStatus(role.getRoleId(), role.getStatus()));
+        return toAjax(roleService.updateRoleStatus(role.getRoleKey(), role.getStatus()));
     }
 
-    /**
-     * 删除角色
-     *
-     * @param roleIds 角色ID串
-     */
+
     @SaCheckPermission("system:role:remove")
     @Log(title = "角色管理", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{roleIds}")
-    public R<Void> remove(@PathVariable Long[] roleIds) {
-        return toAjax(roleService.deleteRoleByIds(roleIds));
+    @DeleteMapping("/{roleKeys}")
+    public R<Void> remove(@PathVariable String[] roleKeys) {
+        return toAjax(roleService.deleteRoleByKeys(roleKeys));
     }
 
-    /**
-     * 获取角色选择框列表
-     *
-     * @param roleIds 角色ID串
-     */
-
     @GetMapping("/optionselect")
-    public R<List<SysRoleVo>> optionselect(@RequestParam(required = false) Long roleIds) {
-        return R.ok(roleService.selectRoleByIds(roleIds == null ? null : List.of(roleIds)));
+    public R<List<SysRoleVo>> optionselect() {
+        return R.ok(roleService.selectRoleByKeys());
     }
 
     /**
@@ -182,31 +155,19 @@ public class SysRoleController extends BaseController {
         return toAjax(roleService.deleteAuthUser(userRole));
     }
 
-    /**
-     * 批量取消授权用户
-     *
-     * @param roleId  角色ID
-     * @param userIds 用户ID串
-     */
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BusinessType.GRANT)
     @PutMapping("/authUser/cancelAll")
-    public R<Void> cancelAuthUserAll(Long roleId, Long[] userIds) {
-        return toAjax(roleService.deleteAuthUsers(roleId, userIds));
+    public R<Void> cancelAuthUserAll(String roleKey, Long[] userIds) {
+        return toAjax(roleService.deleteAuthUsers(roleKey, userIds));
     }
 
-    /**
-     * 批量选择用户授权
-     *
-     * @param roleId  角色ID
-     * @param userIds 用户ID串
-     */
+
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BusinessType.GRANT)
     @PutMapping("/authUser/selectAll")
-    public R<Void> selectAuthUserAll(Long roleId, Long[] userIds) {
-        roleService.checkRoleDataScope(roleId);
-        return toAjax(roleService.insertAuthUsers(roleId, userIds));
+    public R<Void> selectAuthUserAll(String roleKey, Long[] userIds) {
+        return toAjax(roleService.insertAuthUsers(roleKey, userIds));
     }
 
 

@@ -150,8 +150,11 @@ public class SysLoginService {
         loginUser.setGoogleSecret(user.getGoogleSecret());
         loginUser.setMenuPermission(permissionService.getMenuPermission(userId,user.getUserName()));
         loginUser.setRolePermission(permissionService.getRolePermission(userId));
-        List<SysRoleVo> roles = roleService.selectRolesByUserId(userId);
-        loginUser.setRoles(BeanUtil.copyToList(roles, RoleDTO.class));
+        SysRoleVo roles = roleService.selectRolesByUserId(userId);
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setRoleKey(roles.getRoleKey());
+        roleDTO.setRoleName(roles.getRoleName());
+        loginUser.setRoles(roleDTO);
         return loginUser;
     }
 

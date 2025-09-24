@@ -20,12 +20,12 @@ public class SysUserInfoVo {
     /**
      * 角色ID列表
      */
-    private List<Long> roleIds;
+    private String roleKey;
 
     /**
      * 角色列表
      */
-    private List<SysRoleVo> roles;
+    private SysRoleVo roles;
 
 
 

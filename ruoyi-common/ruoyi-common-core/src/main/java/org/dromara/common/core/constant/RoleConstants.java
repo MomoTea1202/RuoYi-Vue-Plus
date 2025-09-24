@@ -11,6 +11,9 @@ public interface RoleConstants {
     /**
      * 超级管理员角色 roleKey
      */
-    String SUPER_ADMIN_ROLE_KEY = "superadmin";
+    String SUPER_ADMIN_ROLE_KEY = "SA";
+    String COMPANY_ROLE_KEY = "CPY";
+    String MER_ROLE_KEY = "MER";
+    String AGENT_LEADER_ROLE_KEY = "LDR";
 
 }

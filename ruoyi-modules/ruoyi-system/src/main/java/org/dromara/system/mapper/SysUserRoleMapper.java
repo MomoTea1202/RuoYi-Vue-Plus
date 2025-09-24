@@ -18,6 +18,6 @@ public interface SysUserRoleMapper extends BaseMapperPlus<SysUserRole, SysUserRo
      * @param roleId 角色ID
      * @return 关联到指定角色的用户ID列表
      */
-    List<Long> selectUserIdsByRoleId(Long roleId);
+    List<Long> selectUserIdsByRoleKey(String roleKey);
 
 }

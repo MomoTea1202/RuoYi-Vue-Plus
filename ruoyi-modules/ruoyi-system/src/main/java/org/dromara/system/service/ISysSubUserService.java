@@ -52,14 +52,6 @@ public interface ISysSubUserService {
     List<SysUserVo> selectUserByIds(List<Long> userIds);
 
     /**
-     * 根据用户ID查询用户所属角色组
-     *
-     * @param userId 用户ID
-     * @return 结果
-     */
-    String selectUserRoleGroup(Long userId);
-
-    /**
      * 校验用户名称是否唯一
      *
      * @param user 用户信息
@@ -127,7 +119,7 @@ public interface ISysSubUserService {
      * @param userId  用户ID
      * @param roleIds 角色组
      */
-    void insertUserAuth(Long userId, Long roleIds);
+    void insertUserAuth(Long userId, String roleKey);
 
     /**
      * 修改用户状态

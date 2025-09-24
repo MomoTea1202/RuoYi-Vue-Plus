@@ -55,6 +55,18 @@
         SELECT u.user_id, u.user_name
         FROM sys_user u
         LEFT JOIN sys_user_role r on u.user_id = r.user_id
-        WHERE r.role_id =2 AND u.status = 0
+        WHERE r.role_key ="CPY" AND u.status = 0
+    </select>
+
+
+    <select id="selectMainUserByUserId" parameterType="long" resultMap="SysUserResult">
+        SELECT s.*
+        FROM sys_user s
+        JOIN (
+        SELECT is_sub, create_by
+        FROM sys_user
+        WHERE user_id = #{userId}
+        ) u2
+        ON s.user_id = CASE WHEN u2.is_sub = 0 THEN #{userId} ELSE u2.create_by END;
     </select>
 </mapper>

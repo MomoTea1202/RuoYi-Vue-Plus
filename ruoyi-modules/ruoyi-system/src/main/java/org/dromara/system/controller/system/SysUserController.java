@@ -108,13 +108,11 @@ public class SysUserController extends BaseController {
         if (ObjectUtil.isNull(user)) {
             return R.fail("没有权限访问用户数据!");
         }
-        Long roleId= 0L;
-        for (RoleDTO role : loginUser.getRoles()) {
-             roleId = role.getRoleId();
-        }
+        String roleKey= loginUser.getRoles().getRoleKey();
+
         userInfoVo.setUser(user);
         userInfoVo.setPermissions(loginUser.getMenuPermission());
-        userInfoVo.setRoles(roleId.toString());
+        userInfoVo.setRoles(roleKey);
         return R.ok(userInfoVo);
     }
 
@@ -131,12 +129,13 @@ public class SysUserController extends BaseController {
             userService.checkUserDataScope(userId);
             SysUserVo sysUser = userService.selectUserById(userId);
             userInfoVo.setUser(sysUser);
-            userInfoVo.setRoleIds(roleService.selectRoleListByUserId(userId));
+            userInfoVo.setRoleKey(roleService.selectRoleListByUserId(userId));
         }
         SysRoleBo roleBo = new SysRoleBo();
         roleBo.setStatus(SystemConstants.NORMAL);
         List<SysRoleVo> roles = roleService.selectRoleList(roleBo);
-        userInfoVo.setRoles(LoginHelper.isSuperAdmin(userId) ? roles : StreamUtils.filter(roles, r -> !r.isSuperAdmin()));
+       SysRoleVo roleVo = roles.get(0);
+        userInfoVo.setRoles(roleVo);
         return R.ok(userInfoVo);
     }
 
@@ -247,10 +246,10 @@ public class SysUserController extends BaseController {
     public R<SysUserInfoVo> authRole(@PathVariable Long userId) {
         userService.checkUserDataScope(userId);
         SysUserVo user = userService.selectUserById(userId);
-        List<SysRoleVo> roles = roleService.selectRolesAuthByUserId(userId);
+        SysRoleVo roles = roleService.selectRolesAuthByUserId(userId);
         SysUserInfoVo userInfoVo = new SysUserInfoVo();
         userInfoVo.setUser(user);
-        userInfoVo.setRoles(LoginHelper.isSuperAdmin(userId) ? roles : StreamUtils.filter(roles, r -> !r.isSuperAdmin()));
+        userInfoVo.setRoles(roles);
         return R.ok(userInfoVo);
     }
 
@@ -258,14 +257,14 @@ public class SysUserController extends BaseController {
      * 用户授权角色
      *
      * @param userId  用户Id
-     * @param roleIds 角色ID串
+     * @param roleKey 角色ID串
      */
     @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.GRANT)
     @PutMapping("/authRole")
-    public R<Void> insertAuthRole(Long userId, Long roleIds) {
+    public R<Void> insertAuthRole(Long userId, String roleKey) {
         userService.checkUserDataScope(userId);
-        userService.insertUserAuth(userId, roleIds);
+        userService.insertUserAuth(userId, roleKey);
         return R.ok();
     }
 

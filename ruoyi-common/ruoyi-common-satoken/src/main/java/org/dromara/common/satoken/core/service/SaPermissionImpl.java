@@ -52,8 +52,9 @@ public class SaPermissionImpl implements StpInterface {
         if (ObjectUtil.isNull(loginUser) || !loginUser.getLoginId().equals(loginId)) {
             PermissionService permissionService = getPermissionService();
             if (ObjectUtil.isNotNull(permissionService)) {
-                List<String> list = StringUtils.splitList(loginId.toString(), ":");
-                return new ArrayList<>(permissionService.getRolePermission(Long.parseLong(list.get(1))));
+                List<String>  rolePerm =new ArrayList<>();
+                rolePerm.add(loginUser.getRolePermission());
+                return rolePerm;
             } else {
                 throw new ServiceException("PermissionService 实现类不存在");
             }
@@ -62,8 +63,10 @@ public class SaPermissionImpl implements StpInterface {
         if (userType == UserType.APP_USER) {
             // 其他端 自行根据业务编写
         }
+        List<String>  rolePerm =new ArrayList<>();
+        rolePerm.add(loginUser.getRolePermission());
         // SYS_USER 默认返回权限
-        return new ArrayList<>(loginUser.getRolePermission());
+        return rolePerm;
     }
 
     private PermissionService getPermissionService() {

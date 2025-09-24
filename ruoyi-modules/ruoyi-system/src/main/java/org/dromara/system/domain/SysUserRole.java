@@ -24,6 +24,6 @@ public class SysUserRole {
     /**
      * 角色ID
      */
-    private Long roleId;
+    private String roleKey;
 
 }

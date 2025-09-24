@@ -63,18 +63,18 @@ public interface UserService {
     /**
      * 通过角色ID查询用户ID
      *
-     * @param roleIds 角色ids
+     * @param roleKey 角色ids
      * @return 用户ids
      */
-    List<Long> selectUserIdsByRoleIds(List<Long> roleIds);
+    List<Long> selectUserIdsByRoleKey(String roleKey);
 
     /**
      * 通过角色ID查询用户
      *
-     * @param roleIds 角色ids
+     * @param roleKey 角色ids
      * @return 用户
      */
-    List<UserDTO> selectUsersByRoleIds(List<Long> roleIds);
+    List<UserDTO> selectUsersByRoleKey(String roleKey);
 
 
     /**
@@ -88,10 +88,10 @@ public interface UserService {
     /**
      * 根据角色 ID 列表查询角色名称映射关系
      *
-     * @param roleIds 角色 ID 列表
+     * @param roleKey 角色 ID 列表
      * @return Map，其中 key 为角色 ID，value 为对应的角色名称
      */
-    Map<Long, String> selectRoleNamesByIds(List<Long> roleIds);
+    Map<String, String> selectRoleNamesByKey(String roleKey);
 
 
 }

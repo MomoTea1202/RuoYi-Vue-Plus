@@ -82,16 +82,7 @@ public class SysUserBo extends BaseEntity {
      */
     private String remark;
 
-    /**
-     * 角色组
-     */
-
-    private Long roleIds;
-
-    /**
-     * 数据权限 当前角色ID
-     */
-    private Long roleId;
+    private String roleKey;
 
     /**
      * 用户ID
@@ -123,8 +114,6 @@ public class SysUserBo extends BaseEntity {
         this.userId = userId;
     }
 
-    public boolean isSuperAdmin() {
-        return SystemConstants.SUPER_ADMIN_ID.equals(this.userId);
-    }
+
 
 }

@@ -64,24 +64,7 @@ public class SubAccUsrController extends BaseController {
         ExcelUtil.exportExcel(new ArrayList<>(), "用户数据", SysUserImportVo.class, response);
     }
 
-    /**
-     * 获取用户信息
-     *
-     * @return 用户信息
-     */
-    @GetMapping("/getInfo")
-    public R<UserInfoVo> getInfo() {
-        UserInfoVo userInfoVo = new UserInfoVo();
-        LoginUser loginUser = LoginHelper.getLoginUser();
-        SysUserVo user = userService.selectUserById(loginUser.getUserId());
-        if (ObjectUtil.isNull(user)) {
-            return R.fail("没有权限访问用户数据!");
-        }
-        userInfoVo.setUser(user);
-        userInfoVo.setPermissions(loginUser.getMenuPermission());
-        userInfoVo.setRoles(loginUser.getRoleId().toString());
-        return R.ok(userInfoVo);
-    }
+
 
     /**
      * 根据用户编号获取详细信息
@@ -96,12 +79,13 @@ public class SubAccUsrController extends BaseController {
             userService.checkUserDataScope(userId);
             SysUserVo sysUser = userService.selectUserById(userId);
             userInfoVo.setUser(sysUser);
-            userInfoVo.setRoleIds(roleService.selectRoleListByUserId(userId));
+            userInfoVo.setRoleKey(roleService.selectRoleListByUserId(userId));
         }
         SysRoleBo roleBo = new SysRoleBo();
         roleBo.setStatus(SystemConstants.NORMAL);
         List<SysRoleVo> roles = roleService.selectRoleList(roleBo);
-        userInfoVo.setRoles(LoginHelper.isSuperAdmin(userId) ? roles : StreamUtils.filter(roles, r -> !r.isSuperAdmin()));
+        SysRoleVo roleVo = roles.get(0);
+        userInfoVo.setRoles(roleVo);
         return R.ok(userInfoVo);
     }
 
@@ -207,10 +191,10 @@ public class SubAccUsrController extends BaseController {
     public R<SysUserInfoVo> authRole(@PathVariable Long userId) {
         userService.checkUserDataScope(userId);
         SysUserVo user = userService.selectUserById(userId);
-        List<SysRoleVo> roles = roleService.selectRolesAuthByUserId(userId);
+        SysRoleVo roles = roleService.selectRolesAuthByUserId(userId);
         SysUserInfoVo userInfoVo = new SysUserInfoVo();
         userInfoVo.setUser(user);
-        userInfoVo.setRoles(LoginHelper.isSuperAdmin(userId) ? roles : StreamUtils.filter(roles, r -> !r.isSuperAdmin()));
+        userInfoVo.setRoles(roles);
         return R.ok(userInfoVo);
     }
 
@@ -218,14 +202,13 @@ public class SubAccUsrController extends BaseController {
      * 用户授权角色
      *
      * @param userId  用户Id
-     * @param roleIds 角色ID串
      */
     @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.GRANT)
     @PutMapping("/authRole")
-    public R<Void> insertAuthRole(Long userId, Long roleIds) {
+    public R<Void> insertAuthRole(Long userId, String roleKey) {
         userService.checkUserDataScope(userId);
-        userService.insertUserAuth(userId, roleIds);
+        userService.insertUserAuth(userId, roleKey);
         return R.ok();
     }
 

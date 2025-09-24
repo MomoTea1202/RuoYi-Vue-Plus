@@ -47,7 +47,7 @@ public interface ISysMenuService {
      * @param roleId 角色ID
      * @return 权限列表
      */
-    Set<String> selectMenuPermsByRoleId(Long roleId);
+    Set<String> selectMenuPermsByRoleKey(String roleKey);
 
     /**
      * 根据用户ID查询菜单树信息
@@ -63,7 +63,7 @@ public interface ISysMenuService {
      * @param roleId 角色ID
      * @return 选中菜单列表
      */
-    List<Long> selectMenuListByRoleId(Long roleId);
+    List<Long> selectMenuListByRoleKey(String roleKey);
 
     List<Long> selectMenuListByUserName(String username);
 

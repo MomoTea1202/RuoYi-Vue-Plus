@@ -107,18 +107,13 @@ public class SysUserVo implements Serializable {
     /**
      * 角色对象
      */
-    private List<SysRoleVo> roles;
+    private SysRoleVo roles;
 
     /**
      * 角色组
      */
-    private Long roleIds;
+    private String roleKey;
 
-
-    /**
-     * 数据权限 当前角色ID
-     */
-    private Long roleId;
 
     private String googleSecret;
 

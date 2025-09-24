@@ -7,7 +7,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.dromara.common.core.constant.RoleConstants;
 import org.dromara.common.core.constant.SystemConstants;
+import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
 import org.dromara.system.domain.SysRole;
 
@@ -24,9 +26,11 @@ import org.dromara.system.domain.SysRole;
 public class SysRoleBo extends BaseEntity {
 
     /**
-     * 角色ID
+     * 角色权限字符串
      */
-    private Long roleId;
+    @NotBlank(message = "角色权限字符串不能为空")
+    @Size(min = 0, max =20 , message = "权限字符长度不能超过{max}个字符")
+    private String roleKey;
 
     /**
      * 角色名称
@@ -35,12 +39,7 @@ public class SysRoleBo extends BaseEntity {
     @Size(min = 0, max = 30, message = "角色名称长度不能超过{max}个字符")
     private String roleName;
 
-    /**
-     * 角色权限字符串
-     */
-    @NotBlank(message = "角色权限字符串不能为空")
-    @Size(min = 0, max = 100, message = "权限字符长度不能超过{max}个字符")
-    private String roleKey;
+
 
     /**
      * 显示顺序
@@ -48,38 +47,21 @@ public class SysRoleBo extends BaseEntity {
     @NotNull(message = "显示顺序不能为空")
     private Integer roleSort;
 
-    /**
-     * 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限 5：仅本人数据权限 6：部门及以下或本人数据权限）
-     */
-    private String dataScope;
-
-    /**
-     * 菜单树选择项是否关联显示
-     */
-    private Boolean menuCheckStrictly;
-
-
-    /**
-     * 角色状态（0正常 1停用）
-     */
     private String status;
 
-    /**
-     * 备注
-     */
-    private String remark;
+
 
     /**
      * 菜单组
      */
     private Long[] menuIds;
 
-    public SysRoleBo(Long roleId) {
-        this.roleId = roleId;
+    public SysRoleBo(String roleKey) {
+        this.roleKey = roleKey;
     }
 
     public boolean isSuperAdmin() {
-        return SystemConstants.SUPER_ADMIN_ID.equals(this.roleId);
+        return StringUtils.equals(RoleConstants.SUPER_ADMIN_ROLE_KEY,this.roleKey);
     }
 
 }

@@ -15,6 +15,7 @@ import jakarta.activation.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.constant.CacheNames;
+import org.dromara.common.core.constant.RoleConstants;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.dto.UserDTO;
 import org.dromara.common.core.exception.ServiceException;
@@ -67,6 +68,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     private final EachUsrPermMapper usrPermMapper;
     private final GoogleTwoFAService googleTwoFAService;
     private final NtfEmlTplSrv ntfEmlTplSrv;
+
 
 
 
@@ -178,7 +180,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     public TableDataInfo<SysUserVo> selectAllocatedList(SysUserBo user, PageQuery pageQuery) {
         QueryWrapper<SysUser> wrapper = Wrappers.query();
         wrapper.eq("u.del_flag", SystemConstants.NORMAL)
-            .eq(ObjectUtil.isNotNull(user.getRoleId()), "r.role_id", user.getRoleId())
+            .eq(ObjectUtil.isNotNull(user.getRoleKey()), "r.role_key", user.getRoleKey())
             .like(StringUtils.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
             .eq(StringUtils.isNotBlank(user.getStatus()), "u.status", user.getStatus())
             .like(StringUtils.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
@@ -195,10 +197,10 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      */
     @Override
     public TableDataInfo<SysUserVo> selectUnallocatedList(SysUserBo user, PageQuery pageQuery) {
-        List<Long> userIds = userRoleMapper.selectUserIdsByRoleId(user.getRoleId());
+        List<Long> userIds = userRoleMapper.selectUserIdsByRoleKey(user.getRoleKey());
         QueryWrapper<SysUser> wrapper = Wrappers.query();
         wrapper.eq("u.del_flag", SystemConstants.NORMAL)
-            .and(w -> w.ne("r.role_id", user.getRoleId()).or().isNull("r.role_id"))
+            .and(w -> w.ne("r.role_id", user.getRoleKey()).or().isNull("r.role_key"))
             .notIn(CollUtil.isNotEmpty(userIds), "u.user_id", userIds)
             .like(StringUtils.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
             .like(StringUtils.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
@@ -273,11 +275,9 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      */
     @Override
     public String selectUserRoleGroup(Long userId) {
-        List<SysRoleVo> list = roleMapper.selectRolesByUserId(userId);
-        if (CollUtil.isEmpty(list)) {
-            return StringUtils.EMPTY;
-        }
-        return StreamUtils.join(list, SysRoleVo::getRoleName);
+        SysRoleVo roleVo = roleMapper.selectRolesByUserId(userId);
+
+        return roleVo.getRoleName();
     }
 
     /**
@@ -361,7 +361,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     public int insertUser(SysUserBo user,String nPassword) {
         long loginUserId=LoginHelper.getUserId();
         boolean isSa= LoginHelper.isSuperAdmin(loginUserId);
-        boolean isCrtCpy = user.getRoleIds() ==2;
+        boolean isCrtCpy = StringUtils.equals(user.getRoleKey(), RoleConstants.COMPANY_ROLE_KEY);
         user.setIsSub(false);
         if (isSa){
             if(isCrtCpy){
@@ -412,12 +412,12 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * 用户授权角色
      *
      * @param userId  用户ID
-     * @param roleIds 角色组
+     * @param roleKey 角色组
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void insertUserAuth(Long userId, Long roleIds) {
-        insertUserRole(userId, roleIds, true);
+    public void insertUserAuth(Long userId, String roleKey) {
+        insertUserRole(userId, roleKey, true);
     }
 
     /**
@@ -490,20 +490,20 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param clear 清除已存在的关联数据
      */
     private void insertUserRole(SysUserBo user, boolean clear) {
-        this.insertUserRole(user.getUserId(), user.getRoleIds(), clear);
+        this.insertUserRole(user.getUserId(), user.getRoleKey(), clear);
     }
 
     private void insertUserPermission (SysUserBo user, boolean clear){
-        Long role = user.getRoleIds();
-        if (ArrayUtil.isNotEmpty(role)) {
+        String role = user.getRoleKey();
+        if (StringUtils.isNotEmpty(role)) {
             if (clear) {
                 // 删除用户与岗位关联
                 usrPermMapper.delete(new LambdaQueryWrapper<EachUserPerm>().eq(EachUserPerm::getUsername, user.getUserName()));
             }
             // 新增用户与岗位管理
-            List<String> permList = menuMapper.selectMenuPermsByRoleId(role);
+            List<String> permList = menuMapper.selectMenuPermsByRoleKey(role);
             String perm = String.join(",",permList);
-            List<Long> menuId = menuMapper.selectMenuListByRoleId(role, false);
+            List<Long> menuId = menuMapper.selectMenuListByRoleKey(role);
             String menuIds = StringUtils.join(menuId, ",");
                 EachUserPerm up = new EachUserPerm();
                 up.setUsername(user.getUserName());
@@ -515,33 +515,26 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * 新增用户角色信息
      *
      * @param userId  用户ID
-     * @param roleIds 角色组
+     * @param roleKey 角色组
      * @param clear   清除已存在的关联数据
      */
-    private void insertUserRole(Long userId, Long roleIds, boolean clear) {
-        if (ArrayUtil.isNotEmpty(roleIds)) {
-            List<Long> roleList = new ArrayList<>(List.of(roleIds));
-            if (!LoginHelper.isSuperAdmin(userId)) {
-                roleList.remove(SystemConstants.SUPER_ADMIN_ID);
-            }
-            // 判断是否具有此角色的操作权限
-            List<SysRoleVo> roles = roleMapper.selectRoleList(
-                new QueryWrapper<SysRole>().in("r.role_id", roleList));
-            if (CollUtil.isEmpty(roles)) {
+    private void insertUserRole(Long userId, String roleKey, boolean clear) {
+        if (StringUtils.isNotEmpty(roleKey)) {
+
+            SysRoleVo roles = roleMapper.selectRoleByRoleKey(roleKey);
+            if (ObjectUtil.isEmpty(roles)) {
                 throw new ServiceException("没有权限访问角色的数据");
             }
             if (clear) {
                 // 删除用户与角色关联
                 userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, userId));
             }
-            // 新增用户与角色管理
-            List<SysUserRole> list = StreamUtils.toList(roleList, roleId -> {
-                SysUserRole ur = new SysUserRole();
-                ur.setUserId(userId);
-                ur.setRoleId(roleId);
-                return ur;
-            });
-            userRoleMapper.insertBatch(list);
+
+                SysUserRole userRole = new SysUserRole();
+                userRole.setUserId(userId);
+                userRole.setRoleKey(roleKey);
+
+            userRoleMapper.insert(userRole);
         }
     }
 
@@ -691,34 +684,34 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     /**
      * 通过角色ID查询用户ID
      *
-     * @param roleIds 角色ids
+     * @param roleKey 角色ids
      * @return 用户ids
      */
     @Override
-    public List<Long> selectUserIdsByRoleIds(List<Long> roleIds) {
-        if (CollUtil.isEmpty(roleIds)) {
+    public List<Long> selectUserIdsByRoleKey(String roleKey) {
+        if (StringUtils.isEmpty(roleKey)) {
             return List.of();
         }
         List<SysUserRole> userRoles = userRoleMapper.selectList(
-            new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getRoleId, roleIds));
+            new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleKey, roleKey));
         return StreamUtils.toList(userRoles, SysUserRole::getUserId);
     }
 
     /**
      * 通过角色ID查询用户
      *
-     * @param roleIds 角色ids
+     * @param roleKey 角色ids
      * @return 用户
      */
     @Override
-    public List<UserDTO> selectUsersByRoleIds(List<Long> roleIds) {
-        if (CollUtil.isEmpty(roleIds)) {
+    public List<UserDTO> selectUsersByRoleKey(String roleKey) {
+        if (StringUtils.isEmpty(roleKey)) {
             return List.of();
         }
 
         // 通过角色ID获取用户角色信息
         List<SysUserRole> userRoles = userRoleMapper.selectList(
-            new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getRoleId, roleIds));
+            new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getRoleKey, roleKey));
 
         // 获取用户ID列表
         Set<Long> userIds = StreamUtils.toSet(userRoles, SysUserRole::getUserId);
@@ -750,20 +743,20 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     /**
      * 根据角色 ID 列表查询角色名称映射关系
      *
-     * @param roleIds 角色 ID 列表
+     * @param roleKey 角色 ID 列表
      * @return Map，其中 key 为角色 ID，value 为对应的角色名称
      */
     @Override
-    public Map<Long, String> selectRoleNamesByIds(List<Long> roleIds) {
-        if (CollUtil.isEmpty(roleIds)) {
+    public Map<String, String> selectRoleNamesByKey(String roleKey) {
+        if (StringUtils.isEmpty(roleKey)) {
             return Collections.emptyMap();
         }
         return roleMapper.selectList(
                 new LambdaQueryWrapper<SysRole>()
-                    .select(SysRole::getRoleId, SysRole::getRoleName)
-                    .in(SysRole::getRoleId, roleIds)
+                    .select(SysRole::getRoleKey, SysRole::getRoleName)
+                    .eq(SysRole::getRoleKey, roleKey)
             ).stream()
-            .collect(Collectors.toMap(SysRole::getRoleId, SysRole::getRoleName));
+            .collect(Collectors.toMap(SysRole::getRoleKey, SysRole::getRoleName));
     }
 
     @Async
